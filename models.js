@@ -7,6 +7,8 @@ const Tile = {
     flagged: false,
     claimant_color: '#c8c8c8',
     clicked: false,
-    detect: function
+    detect: function (mouse_x, mouse_y, mouse_click, ctx) {
+
+    }
 
 }

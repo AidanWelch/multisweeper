@@ -1,6 +1,6 @@
-import { createBrotliCompress } from "zlib";
-
 const canvas = document.querySelector("canvas");
+const ctx = canvas.getContext("2d");
+
 if (window.location.href[4] == "s"){
     const socket = new WebSocket('ws' + window.location.href.substring(5));
 } else {
