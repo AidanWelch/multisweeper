@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var path = require('path');
+var gameserver = require('./gameserver');
 
 app.use(bodyParser.json());
 
@@ -24,3 +25,5 @@ app.get('/', (req, res) => {
 });
 
 app.listen(process.env.PORT || 80);
+
+gameserver.start(app);

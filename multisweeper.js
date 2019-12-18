@@ -3,9 +3,9 @@ const ctx = canvas.getContext("2d");
 const tile_size = 10;
 
 if (window.location.href[4] == "s"){
-    const socket = new WebSocket('ws' + window.location.href.substring(5));
+    const socket = new WebSocket('ws' + window.location.href.substring(5) + 'ws');
 } else {
-    const socket = new WebSocket('ws' + window.location.href.substring(4));
+    const socket = new WebSocket('ws' + window.location.href.substring(4) + 'ws');
 }
 
 const colors = {
