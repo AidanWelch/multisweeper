@@ -17,8 +17,7 @@ const colors = {
 }
 
 const Tile = {
-    flagged: false,
-    claimant_color: colors.ground,
+    claimant_id: null,
     clicked: false,
     draw: function (ctx){
         if(flagged){
