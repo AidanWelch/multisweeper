@@ -1,7 +1,9 @@
 const canvas = document.querySelector("canvas");
+canvas.width = 1000;
+canvas.height = 1000;
 const ctx = canvas.getContext("2d");
 const TILE_SIZE = 10;
-const TILE_GAP = 10
+const TILE_GAP = 1;
 const socket = new WebSocket('ws' + window.location.href.slice(4, -1) + ':81');
 if (window.location.href[4] == "s"){
     const socket = new WebSocket('ws' + window.location.href.slice(5, -1) + ':81');
@@ -25,7 +27,7 @@ class Request {
 }
 
 function GetColor(id){
-    id.toString();
+    id = toString(id).split('');
     let h = 40 * id.pop();
     let s = 100;
     let l = 50;
@@ -40,11 +42,11 @@ function GetColor(id){
 
 function Draw(tile) {
     if(tile.claimant_id == null){
-        ctx.fillStyle = colors.tile_top;
+        ctx.fillStyle = /*GetColor(Math.floor(Math.random*10)); */ colors.tile_top;
     }   else {
         ctx.fillStyle = GetColor(tile.claimant_id);
     }
-    ctx.fillRect(tile.x + TILE_GAP, tile.y + TILE_GAP, (tile.x + TILE_SIZE - TILE_GAP), (tile.y + TILE_SIZE - TILE_GAP));
+    ctx.fillRect(tile.x, tile.y, (tile.x + TILE_SIZE - TILE_GAP), (tile.y + TILE_SIZE - TILE_GAP));
 }
 
 
@@ -59,6 +61,7 @@ socket.onmessage = function(recieved) {
 
 socket.onopen = function(e){
     function Game () {
+        ctx.translate(-100,-100)
         socket.send(JSON.stringify(new Request('create', {name: 'test'})));
     }
     Game();
