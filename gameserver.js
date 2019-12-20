@@ -16,7 +16,7 @@ var players = [];
 var map = game.MapGen();
 
 function CreatePlayer(name){
-    for( let i; i < players.length; i++ ){
+    for(let i = 0; i < players.length; i++ ){
         if( players[i] == null ){
             players[i] = new Player(i, name, 0);
             return i;

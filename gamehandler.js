@@ -11,9 +11,9 @@ class Tile {
 
 function MapGen(){
     let map = [];
-    for(let x; x < DIMENSIONS; x++){
+    for(let x = 0; x < DIMENSIONS; x++){
         map.push([]);
-        for(let y; y < DIMENSIONS; y++){
+        for(let y = 0; y < DIMENSIONS; y++){
             map[x].push(new Tile(x,y));
             if(Math.random() < BOMBS_PER_TILE){
                 map[x][y].count = 'bomb';
@@ -26,8 +26,8 @@ function MapGen(){
 }
 
 function UpdateCount( map ) {
-    for(let x; x < DIMENSIONS; x++){
-        for(let y; y < DIMENSIONS; y++){
+    for(let x = 0; x < DIMENSIONS; x++){
+        for(let y = 0; y < DIMENSIONS; y++){
             if(map[x][y].count != 'bomb') {
                 let count = 0;
                 for(subx = -1; subx <= 1; subx++) {
@@ -49,8 +49,8 @@ function UpdateCount( map ) {
 }
 
 function DeletePlayer( map, id ) {
-    for(let x; x < DIMENSIONS; x++){
-        for(let y; y < DIMENSIONS; y++){
+    for(let x = 0; x < DIMENSIONS; x++){
+        for(let y = 0; y < DIMENSIONS; y++){
             if(map[x][y].claimant_id == id){
                 map[x][y].claimant_id = null;
                 if(Math.random() < BOMBS_PER_TILE){
@@ -82,8 +82,8 @@ function ClaimNeighbors ( map, x, y, id ){
 }
 
 function GetPlayersMap ( map, id ){
-    for(let x; x < DIMENSIONS; x++){
-        for(let y; y < DIMENSIONS; y++){
+    for(let x = 0; x < DIMENSIONS; x++){
+        for(let y = 0; y < DIMENSIONS; y++){
             if(map[x][y].claimant_id != id || id == null){
                 map[x][y].count = null;
             }

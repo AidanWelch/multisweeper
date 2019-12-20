@@ -1,6 +1,7 @@
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 const TILE_SIZE = 10;
+const TILE_GAP = 10
 const socket = new WebSocket('ws' + window.location.href.slice(4, -1) + ':81');
 if (window.location.href[4] == "s"){
     const socket = new WebSocket('ws' + window.location.href.slice(5, -1) + ':81');
@@ -43,25 +44,22 @@ function Draw(tile) {
     }   else {
         ctx.fillStyle = GetColor(tile.claimant_id);
     }
-    ctx.fillRect(tile.x, tile.y, (tile.x + TILE_SIZE), (tile.y + TILE_SIZE));
+    ctx.fillRect(tile.x + TILE_GAP, tile.y + TILE_GAP, (tile.x + TILE_SIZE - TILE_GAP), (tile.y + TILE_SIZE - TILE_GAP));
 }
 
 
 socket.onmessage = function(recieved) {
     let res = JSON.parse(recieved.data);
-    for(let x; x < res.map.length; x++){
-        for(let y; y < res.map.length; y++){
+    for(let x = 0; x < res.map.length; x++){
+        for(let y = 0; y < res.map.length; y++){
             Draw(res.map[x][y]);
-            console.log(res.map[x][y])
         }
     }
-    console.log(recieved);
 }
 
 socket.onopen = function(e){
     function Game () {
         socket.send(JSON.stringify(new Request('create', {name: 'test'})));
     }
-    console.log("open");
     Game();
 }
