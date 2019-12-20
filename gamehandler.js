@@ -10,7 +10,7 @@ class Tile {
 }
 
 function MapGen(){
-    var map = [];
+    let map = [];
     for(let x; x < DIMENSIONS; x++){
         map.push([]);
         for(let y; y < DIMENSIONS; y++){
