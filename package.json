@@ -1,0 +1,24 @@
+{
+  "name": "multisweeper",
+  "version": "1.0.0",
+  "description": "Webbased multisweeper.io game",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "ws": "^7.2.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AidanWelch/multisweeper.git"
+  },
+  "author": "Aidan Welch",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AidanWelch/multisweeper/issues"
+  },
+  "homepage": "https://github.com/AidanWelch/multisweeper#readme"
+}
