@@ -82,14 +82,18 @@ function ClaimNeighbors ( map, x, y, id ){
 }
 
 function GetPlayersMap ( map, id ){
+    let compressedMap = [];
     for(let x = 0; x < DIMENSIONS; x++){
         for(let y = 0; y < DIMENSIONS; y++){
             if(map[x][y].claimant_id != id || id == null){
                 map[x][y].count = null;
             }
+            if(map[x][y].claimant_id != null){
+                compressedMap.push(map[x][y]);
+            }
         }
     }
-    return map;
+    return compressedMap;
 }
 
 module.exports = {

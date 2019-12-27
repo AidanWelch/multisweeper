@@ -30,26 +30,30 @@ function CreatePlayer(name){
 
 wss.on('connection', function connection(ws) {
     let id = null;
+
     ws.on('message', function incoming(message) {
         req = JSON.parse(message);
         if(req.operation == 'create'){
             id = CreatePlayer(req.data.name);
+            console.log(`Played ${id} created`);
             updateEmitter.emit('update');
         }
         if(id != null){
             if(req.operation == 'click'){
                 if(map[req.data.x][req.data.y].count == 'bomb'){
                     map = game.DeletePlayer(map, id);
-                    updateEmitter.emit('update');
                     ws.send('loss');
+                    players[id] = null;
+                    id = null;
+                    updateEmitter.emit('update');
                 } else {
                     if(map[req.data.x][req.data.y].count == 0){
                         map[req.data.x][req.data.y].claimant_id = id;
                         map = game.ClaimNeighbors(map, req.data.x, req.data.y, id);
-                        players[id] += 10;
+                        players[id].score += 10;
                     } else {
                         map[req.data.x][req.data.y].claimant_id = id;
-                        players[id]++;
+                        players[id].score++;
                     }
                     updateEmitter.emit('update');
                 }
@@ -59,19 +63,24 @@ wss.on('connection', function connection(ws) {
         }
     });
 
-    ws.on('close', function closing(e) {
-        map = game.DeletePlayer(map, id);
-        updateEmitter.emit('update');
-    });
-
-    updateEmitter.on('update', () => {
+    function updateListener () {
         let res = {
             map,
             id: id
         }
         res.map = game.GetPlayersMap(map, id);
         ws.send(JSON.stringify(res));
+    }
+
+    ws.on('close', function closing(e) {
+        map = game.DeletePlayer(map, id);
+        players[id] = null;
+        id = null;
+        updateEmitter.removeListener('update', updateListener);
+        updateEmitter.emit('update');
     });
+
+    updateEmitter.on('update', updateListener);
     
 });
 
