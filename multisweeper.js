@@ -14,11 +14,13 @@ class Tile {
         this.y = y;
         this.claimant_id = null;
         this.count = null;
+        this.fake_claimed = false;
     }
 }
 
 var flaggedTiles = [];
 var map = [];
+var id = null;
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -91,17 +93,19 @@ function Draw(tile) {
     ctx.fillRect((x * GetTileSize()), (y * GetTileSize()), GetTileSize()-1, GetTileSize()-1);
     if(flaggedTiles.findIndex((flagged) => {
         return (flagged[0] == tile.x) && (flagged[1] == tile.y);
-    }) != -1){
-        ctx.fillStyle = colors.flag;
+    }) != -1 || tile.fake_claimed){
+        ctx.fillStyle = GetColor(id);
         ctx.fillRect((x * GetTileSize())+10, (y * GetTileSize())+10, GetTileSize()-21, GetTileSize()-21);
-        ctx.fillStyle = colors.walls;
+        ctx.strokeStyle = colors.walls;
         ctx.strokeRect((x * GetTileSize())+10, (y * GetTileSize())+10, GetTileSize()-21, GetTileSize()-21);
     }
-    if(tile.count != null){
+    if(tile.count > 0){
+        ctx.font = `${GetTileSize()}px Verdana`;
         ctx.fillStyle = colors.walls;
-        ctx.fillText(tile.count, x+1, y+1, GetTileSize-1);
-        ctx.fillStyle = colors.white;
-        ctx.strokeText(tile.count, x+1, y+1, GetTileSize-1);
+        ctx.fillText(tile.count.toString(), x*GetTileSize()+(GetTileSize()/5), (y*GetTileSize())+(GetTileSize()*0.85));
+        ctx.font = `${GetTileSize()}px Verdana`;
+        ctx.strokeStyle = colors.white;
+        ctx.strokeText(tile.count.toString(), x*GetTileSize()+(GetTileSize()/5), (y*GetTileSize())+(GetTileSize()*0.85));
     }
 }
 
@@ -135,6 +139,7 @@ socket.onmessage = function(recieved) {
     if (recieved != 'error' || recieved != 'loss'){
         ClearMap();
         let res = JSON.parse(recieved.data);
+        id = res.id;
         for(let i = 0; i < res.map.length; i++){
             map[res.map[i].x][res.map[i].y] = res.map[i];
         }

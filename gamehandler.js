@@ -6,6 +6,7 @@ class Tile {
         this.y = y;
         this.claimant_id = null;
         this.count = null;
+        this.fake_claimed = false;
     }
 }
 
@@ -30,9 +31,9 @@ function UpdateCount( map ) {
         for(let y = 0; y < DIMENSIONS; y++){
             if(map[x][y].count != 'bomb') {
                 let count = 0;
-                for(subx = -1; subx <= 1; subx++) {
+                for(let subx = -1; subx <= 1; subx++) {
                     if((x+subx) >= 0 && (x+subx) < DIMENSIONS) {
-                        for(suby = -1; suby <= 1; suby++) {
+                        for(let suby = -1; suby <= 1; suby++) {
                             if((y+suby) >= 0 && (y+suby) < DIMENSIONS) {
                                 if(map[x+subx][y+suby].count == 'bomb') {
                                     count += 1;
@@ -44,7 +45,7 @@ function UpdateCount( map ) {
                 map[x][y].count = count;
             }
         }
-    }  
+    }
     return map;
 }
 
@@ -55,7 +56,7 @@ function DeletePlayer( map, id ) {
                 map[x][y].claimant_id = null;
                 if(Math.random() < BOMBS_PER_TILE){
                     map[x][y].count = 'bomb';
-                } else {
+                }  else  {
                     map[x][y].count = null;
                 }
             }
@@ -66,14 +67,14 @@ function DeletePlayer( map, id ) {
 }
 
 function ClaimNeighbors ( map, x, y, id ){
-    for(subx = -1; subx <= 1; subx++) {
+    for(let subx = -1; subx <= 1; subx++) {
         if((x+subx) >= 0 && (x+subx) < DIMENSIONS) {
-            for(suby = -1; suby <= 1; suby++) {
+            for(let suby = -1; suby <= 1; suby++) {
                 if((y+suby) >= 0 && (y+suby) < DIMENSIONS) {
-                    if(map[x+subx][y+suby].count == 0) {
-                        map[req.data.x][req.data.y].claimant_id = id;
-                        ClaimNeighbors(map, req.data.x, req.data.y, id);
-                    }
+                    map[x+subx][y+suby].claimant_id = id;
+                    //if(map[x+subx][y+suby].count == 0) {    /DEPRECATED\
+                        //map = ClaimNeighbors(map, x+subx, y+suby, id);    /DEPRECATED\
+                    //}    /DEPRECATED\
                 }
             }
         }
@@ -85,20 +86,69 @@ function GetPlayersMap ( map, id ){
     let compressedMap = [];
     for(let x = 0; x < DIMENSIONS; x++){
         for(let y = 0; y < DIMENSIONS; y++){
-            if(map[x][y].claimant_id != id || id == null){
-                map[x][y].count = null;
-            }
             if(map[x][y].claimant_id != null){
-                compressedMap.push(map[x][y]);
+                compressedMap.push(Object.assign({}, map[x][y]));
             }
+        }
+    }
+    for(let i = 0; i < compressedMap.length; i++){
+        if(id === null || compressedMap[i].claimant_id !== id){
+            compressedMap[i].count = null;
         }
     }
     return compressedMap;
 }
 
+function FakeClaim( map ) { //this function fake claims bombs so that players can't freely claim other land
+    for(let x = 0; x < DIMENSIONS; x++){
+        for(let y = 0; y < DIMENSIONS; y++){
+            if(map[x][y].count == 'bomb') {
+                let claimable = true;
+                let claimant = null;
+                for(let subx = -1; subx <= 1; subx++) {
+                    if((x+subx) >= 0 && (x+subx) < DIMENSIONS) {
+                        for(let suby = -1; suby <= 1; suby++) {
+                            if((y+suby) >= 0 && (y+suby) < DIMENSIONS) {
+                                if(map[x+subx][y+suby].count == 'bomb' || map[x+subx][y+suby].claimant_id == claimant || claimant == null) {
+                                    claimant = map[x+subx][y+suby].claimant_id;
+                                } else {
+                                    claimable = false;
+                                }
+                            }
+                        }
+                    }
+                }
+                map[x][y].fake_claimed = claimable;
+                if(claimable){
+                    map[x][y].claimant_id = claimant;
+                }
+            }
+        }
+    }
+    return map;
+}
+
+function GetScores ( map, players ){
+    for(let i = 0; i < players.length; i++){
+        if(players[i] != null){
+            players[i].score = 0;
+        }
+    }
+    for(let x = 0; x < DIMENSIONS; x++){
+        for(let y = 0; y < DIMENSIONS; y++){
+            if(map[x][y].claimant_id != null){
+                if(players[map[x][y].claimant_id] != null){
+                    players[map[x][y].claimant_id].score++;
+                }
+            }
+        }
+    }
+} 
 module.exports = {
     MapGen,
     DeletePlayer,
     ClaimNeighbors,
-    GetPlayersMap 
+    GetPlayersMap,
+    GetScores,
+    FakeClaim
 };

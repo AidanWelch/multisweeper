@@ -4,10 +4,10 @@ class UpdateEmitter extends EventEmitter {}
 const updateEmitter = new UpdateEmitter();
 var game = require('./gamehandler.js');
 class Player {
-    constructor( id, name, score ) {    
+    constructor( id, name ) {    
         this.id = id;
         this.name = name;
-        this.score = score;
+        this.score = 0;
     }
 }
 
@@ -18,21 +18,21 @@ var map = game.MapGen();
 function CreatePlayer(name){
     for(let i = 0; i < players.length; i++ ){
         if( players[i] == null ){
-            players[i] = new Player(i, name, 0);
+            players[i] = new Player(i, name);
             return i;
         }
     }
-    players.push({id: players.length, name: name, score: 0});
+    players.push(new Player(players.length, name));
     return players.length-1;
 }
 
 
 
 wss.on('connection', function connection(ws) {
-    let id = null;
-
+    var id = null;
+///TODO add input validation
     ws.on('message', function incoming(message) {
-        req = JSON.parse(message);
+        let req = JSON.parse(message);
         if(req.operation == 'create'){
             id = CreatePlayer(req.data.name);
             console.log(`Played ${id} created`);
@@ -50,11 +50,10 @@ wss.on('connection', function connection(ws) {
                     if(map[req.data.x][req.data.y].count == 0){
                         map[req.data.x][req.data.y].claimant_id = id;
                         map = game.ClaimNeighbors(map, req.data.x, req.data.y, id);
-                        players[id].score += 10;
                     } else {
                         map[req.data.x][req.data.y].claimant_id = id;
-                        players[id].score++;
                     }
+                    map = game.FakeClaim(map);
                     updateEmitter.emit('update');
                 }
             }
@@ -63,10 +62,12 @@ wss.on('connection', function connection(ws) {
         }
     });
 
-    function updateListener () {
+    function updateListener (e, players) {
+        players = game.GetScores(map, players);
         let res = {
+            id: id,
             map,
-            id: id
+            players: players
         }
         res.map = game.GetPlayersMap(map, id);
         ws.send(JSON.stringify(res));
@@ -76,18 +77,10 @@ wss.on('connection', function connection(ws) {
         map = game.DeletePlayer(map, id);
         players[id] = null;
         id = null;
-        updateEmitter.removeListener('update', updateListener);
+        updateEmitter.removeListener('update', e => updateListener(e, players));
         updateEmitter.emit('update');
     });
 
-    updateEmitter.on('update', updateListener);
+    updateEmitter.on('update', e => updateListener(e, players));
     
 });
-
-
-function start(){
-}
-
-module.exports = {
-    start
-}
