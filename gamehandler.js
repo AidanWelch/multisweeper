@@ -94,6 +94,7 @@ function GetPlayersMap ( map, id ){
     for(let i = 0; i < compressedMap.length; i++){
         if(id === null || compressedMap[i].claimant_id !== id){
             compressedMap[i].count = null;
+            compressedMap[i].fake_claimed = false;
         }
     }
     return compressedMap;

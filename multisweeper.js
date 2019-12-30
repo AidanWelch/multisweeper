@@ -1,4 +1,5 @@
 const canvas = document.querySelector("canvas");
+const scoreboard = document.getElementById("scoreboard");
 const ctx = canvas.getContext("2d");
 const DIMENSIONS = 1000;
 const socket = new WebSocket('ws' + window.location.href.slice(4, -1) + ':81');
@@ -189,3 +190,17 @@ canvas.addEventListener('click', function(event) {
     let tile = GetSelectedTile(event);
     socket.send(JSON.stringify(new Request('click', {x: tile[0], y: tile[1]})));
 });
+
+window.addEventListener('keydown', (event) => {
+    event.preventDefault();
+    if(event.key == 'Tab'){
+        scoreboard.style.display = "block";
+    }
+}, false);
+
+window.addEventListener('keyup', (event) => {
+    event.preventDefault();
+    if(event.key == 'Tab'){
+        scoreboard.style.display = "none";
+    }
+}, false);
