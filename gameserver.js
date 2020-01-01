@@ -34,6 +34,11 @@ wss.on('connection', function connection(ws) {
     ws.on('message', function incoming(message) {
         let req = JSON.parse(message);
         if(req.operation == 'create'){
+            if(id != null){
+                map = game.DeletePlayer(map, id);
+                players[id] = null;
+                id = null;
+            }
             id = CreatePlayer(req.data.name);
             console.log(`Played ${id} created`);
             updateEmitter.emit('update');

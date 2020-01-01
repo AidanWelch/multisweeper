@@ -20,6 +20,10 @@ app.get('/multisweeper.js', (req, res) => {
     res.sendFile(path.join(__dirname+'/multisweeper.js'));
 });
 
+app.get('/help', (req, res) => {
+    res.sendFile(path.join(__dirname+'/help.html'));
+});
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname+'/index.html'));
 });

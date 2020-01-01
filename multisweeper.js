@@ -22,6 +22,7 @@ class Tile {
 var flaggedTiles = [];
 var map = [];
 var id = null;
+var players = null;
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -112,8 +113,8 @@ function Draw(tile) {
 
 function DrawAll() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for(let x = view_x; x < GetTileCount(); x++){
-        for(let y = view_y; y < GetTileCount(); y++){
+    for(let x = view_x; x < GetTileCount() + view_x; x++){
+        for(let y = view_y; y < GetTileCount() + view_y; y++){
             Draw(map[x][y]);
         }
     }
@@ -146,6 +147,8 @@ socket.onmessage = function(recieved) {
         }
         DrawAll();
     } else if (recieved == 'loss') {
+        id = null;
+        flaggedTiles = [];
         ///TODO Insert bringing up create menu and loss screen
 
     } else {
@@ -171,30 +174,56 @@ function GetSelectedTile(event){
 }
 
 canvas.addEventListener('contextmenu', function(event) {
-    event.preventDefault();
-    let tile = GetSelectedTile(event);
-    if(flaggedTiles.findIndex((flagged) => {
-        return (flagged[0] == tile[0]) && (flagged[1] == tile[1]);
-    }) == -1){
-        flaggedTiles.push(tile);
-    } else {
-        flaggedTiles = flaggedTiles.filter((flagged) => {
-            return (flagged[0] != tile[0]) || (flagged[1] != tile[1]);
-        });
+    if(id != null){
+        event.preventDefault();
+        let tile = GetSelectedTile(event);
+        if(flaggedTiles.findIndex((flagged) => {
+            return (flagged[0] == tile[0]) && (flagged[1] == tile[1]);
+        }) == -1){
+            flaggedTiles.push(tile);
+        } else {
+            flaggedTiles = flaggedTiles.filter((flagged) => {
+                return (flagged[0] != tile[0]) || (flagged[1] != tile[1]);
+            });
+        }
+        DrawAll();
     }
-    DrawAll();
 });
 
 canvas.addEventListener('click', function(event) {
-    event.preventDefault();
-    let tile = GetSelectedTile(event);
-    socket.send(JSON.stringify(new Request('click', {x: tile[0], y: tile[1]})));
+    if(id != null){
+        event.preventDefault();
+        let tile = GetSelectedTile(event);
+        socket.send(JSON.stringify(new Request('click', {x: tile[0], y: tile[1]})));
+    }
 });
 
 window.addEventListener('keydown', (event) => {
-    event.preventDefault();
-    if(event.key == 'Tab'){
-        scoreboard.style.display = "block";
+    if(id != null){
+        event.preventDefault();
+        if(event.key == 'Tab'){
+            scoreboard.style.display = "block";
+        } else if (event.key == 'w' || event.key == "ArrowUp") {
+            if(view_y > 0){
+                view_y--;
+                DrawAll();
+            }
+        } else if (event.key == 's' || event.key == "ArrowDown") {
+            if(view_y < DIMENSIONS){
+                view_y++;
+                DrawAll();
+            }
+        } else if (event.key == 'a' || event.key == "ArrowLeft") {
+            if(view_x > 0){
+                view_x--;
+                DrawAll();
+            }
+        } else if (event.key == 'd' || event.key == "ArrowRight") {
+            if(view_x < DIMENSIONS){
+                view_x++;
+                DrawAll();
+            }
+        }
     }
 }, false);
 

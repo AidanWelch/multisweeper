@@ -14,10 +14,66 @@ canvas {
 
 body {
 	margin: 0 !important;
-    padding: 0 !important;
+	padding: 0 !important;
+	text-align: center;
+	font-family: Arial;
+}
+
+h1 {
+	font-size: 20vmin;
+	margin: auto auto;
 }
 
 #scoreboard {
 	position: absolute;
 	display: none;
+	top: 5%;
+	margin-left: 10%;
+	margin-right: 10%;
+	width: 80%;
+	font-size: 10vmin;
+	border-collapse: collapse;
+}
+
+table, th, td {
+	border: 5px solid black;
+	background-color: rgba(150, 150, 150, 0.4);
+}
+
+form {
+	display: none;
+}
+
+#menubox {
+	position: absolute;
+	top: 5%;
+	left: 5%;
+	width: 90%;
+	height: 90%;
+	background-color: rgba(255, 255, 255, 0.5);
+	border: 3px solid black;
+}
+
+/*Thanks to W3Schools for this*/
+#loadingicon {
+	margin: auto auto;
+	border: 16px solid #f3f3f3;
+	border-radius: 50%;
+	border-top: 16px solid #3498db;
+	width: 120px;
+	height: 120px;
+	-webkit-animation: spin 2s linear infinite; /* Safari */
+	animation: spin 2s linear infinite;
+}
+
+
+/* Safari */
+@-webkit-keyframes spin {
+	0% { -webkit-transform: rotate(0deg); }
+	100% { -webkit-transform: rotate(360deg); }
+}
+  
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
 }
