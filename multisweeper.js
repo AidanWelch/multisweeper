@@ -1,5 +1,7 @@
 const canvas = document.querySelector("canvas");
 const scoreboard = document.getElementById("scoreboard");
+const loading = document.getElementsByClassName("loading");
+const menu = document.getElementById("menubox");
 const ctx = canvas.getContext("2d");
 const DIMENSIONS = 1000;
 const socket = new WebSocket('ws' + window.location.href.slice(4, -1) + ':81');
@@ -157,6 +159,9 @@ socket.onmessage = function(recieved) {
 }
 
 socket.onopen = function(e) {
+    for(let i = 0; i < loading.length; i++){
+        loading[i].style.display = "none";
+    }
     function Game () {
         ClearMap();
         socket.send(JSON.stringify(new Request('create', {name: 'test'})));
