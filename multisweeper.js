@@ -141,7 +141,7 @@ function ClearMap(){
 }
 
 socket.onmessage = function(recieved) {
-    if (recieved != 'error' || recieved != 'loss'){
+    if (recieved != 'error' && recieved != 'loss'){
         ClearMap();
         let res = JSON.parse(recieved.data);
         id = res.id;
@@ -152,8 +152,12 @@ socket.onmessage = function(recieved) {
     } else if (recieved == 'loss') {
         id = null;
         flaggedTiles = [];
-        ///TODO Insert bringing up create menu and loss screen
-
+        ///TODO loss screen
+        if(Game != null){
+            Game();
+        } else {
+            alert("Something went wrong please refresh the page");
+        }
     } else {
         alert("Somehow you managed to avoid creating an account, please refresh the page.");
     }
@@ -166,7 +170,8 @@ socket.onopen = function(e) {
     }
     Game = function () {
         ClearMap();
-        document.getElementById("submitbutton").onclick = () =>{
+        DrawAll();
+        document.getElementById("startbutton").onclick = () =>{
             socket.send(JSON.stringify(new Request('create', {name: document.getElementById("nickname").value})));
             menubox.style.display = 'none';
         };
