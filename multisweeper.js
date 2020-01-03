@@ -1,7 +1,8 @@
 const canvas = document.querySelector("canvas");
 const scoreboard = document.getElementById("scoreboard");
 const loading = document.getElementsByClassName("loading");
-const menu = document.getElementById("menubox");
+const menubox = document.getElementById("menubox");
+
 const ctx = canvas.getContext("2d");
 const DIMENSIONS = 1000;
 const socket = new WebSocket('ws' + window.location.href.slice(4, -1) + ':81');
@@ -158,13 +159,17 @@ socket.onmessage = function(recieved) {
     }
 }
 
+var Game = null;
 socket.onopen = function(e) {
     for(let i = 0; i < loading.length; i++){
         loading[i].style.display = "none";
     }
-    function Game () {
+    Game = function () {
         ClearMap();
-        socket.send(JSON.stringify(new Request('create', {name: 'test'})));
+        document.getElementById("submitbutton").onclick = () =>{
+            socket.send(JSON.stringify(new Request('create', {name: document.getElementById("nickname").value})));
+            menubox.style.display = 'none';
+        };
     }
     Game();
 }
