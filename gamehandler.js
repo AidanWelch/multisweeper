@@ -110,9 +110,10 @@ function FakeClaim( map ) { //this function fake claims bombs so that players ca
                     if((x+subx) >= 0 && (x+subx) < DIMENSIONS) {
                         for(let suby = -1; suby <= 1; suby++) {
                             if((y+suby) >= 0 && (y+suby) < DIMENSIONS) {
-                                if(map[x+subx][y+suby].count == 'bomb' || map[x+subx][y+suby].claimant_id == claimant || claimant == null) {
+                                if(claimant == null && map[x+subx][y+suby].claimant_id != null){
                                     claimant = map[x+subx][y+suby].claimant_id;
-                                } else {
+                                }
+                                if(map[x+subx][y+suby].count != 'bomb' && map[x+subx][y+suby].claimant_id == claimant) {
                                     claimable = false;
                                 }
                             }
@@ -129,7 +130,7 @@ function FakeClaim( map ) { //this function fake claims bombs so that players ca
     return map;
 }
 
-function GetScores ( map, players ){
+function GetScores ( map, players ){ ///TODO, move this client side?
     for(let i = 0; i < players.length; i++){
         if(players[i] != null){
             players[i].score = 0;

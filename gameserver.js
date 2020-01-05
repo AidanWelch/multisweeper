@@ -54,7 +54,7 @@ wss.on('connection', function connection(ws) {
                 } else {
                     if(map[req.data.x][req.data.y].count == 0){
                         map[req.data.x][req.data.y].claimant_id = id;
-                        map = game.ClaimNeighbors(map, req.data.x, req.data.y, id);
+                        //map = game.ClaimNeighbors(map, req.data.x, req.data.y, id);
                     } else {
                         map[req.data.x][req.data.y].claimant_id = id;
                     }

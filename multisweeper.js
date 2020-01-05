@@ -6,11 +6,13 @@ const menubox = document.getElementById("menubox");
 const ctx = canvas.getContext("2d");
 const DIMENSIONS = 1000;
 const socket = new WebSocket('ws' + window.location.href.slice(4, -1) + ':81');
+/*
 if (window.location.href[4] == "s"){
     const socket = new WebSocket('ws' + window.location.href.slice(5, -1) + ':81');
 } else {
     const socket = new WebSocket('ws' + window.location.href.slice(4, -1) + ':81');
 }
+*/
 
 class Tile {
     constructor( x, y ) {    
@@ -91,7 +93,7 @@ function Draw(tile) {
     let x = tile.x-view_x;
     let y = tile.y-view_y;
     if(tile.claimant_id == null){
-        ctx.fillStyle = colors.tile_top; //GetColor(Math.floor(Math.random()*1000));
+        ctx.fillStyle = colors.tile_top; //DEBUG ONLY GetColor(Math.floor(Math.random()*1000));
     }   else {
         ctx.fillStyle = GetColor(tile.claimant_id);
     }
@@ -141,7 +143,7 @@ function ClearMap(){
 }
 
 socket.onmessage = function(recieved) {
-    if (recieved != 'error' && recieved != 'loss'){
+    if (recieved.data != 'error' && recieved.data != 'loss'){
         ClearMap();
         let res = JSON.parse(recieved.data);
         id = res.id;
@@ -149,14 +151,14 @@ socket.onmessage = function(recieved) {
             map[res.map[i].x][res.map[i].y] = res.map[i];
         }
         DrawAll();
-    } else if (recieved == 'loss') {
+    } else if (recieved.data == 'loss') {
         id = null;
         flaggedTiles = [];
         ///TODO loss screen
         if(Game != null){
             Game();
         } else {
-            alert("Something went wrong please refresh the page");
+            alert("Something went wrong, please refresh the page.");
         }
     } else {
         alert("Somehow you managed to avoid creating an account, please refresh the page.");
@@ -169,9 +171,10 @@ socket.onopen = function(e) {
         loading[i].style.display = "none";
     }
     Game = function () {
+        menubox.style.display = 'block';
         ClearMap();
         DrawAll();
-        document.getElementById("startbutton").onclick = () =>{
+        document.getElementById("startbutton").onclick = () =>{ ///TODO add this on enter too 
             socket.send(JSON.stringify(new Request('create', {name: document.getElementById("nickname").value})));
             menubox.style.display = 'none';
         };
@@ -209,7 +212,11 @@ canvas.addEventListener('click', function(event) {
     if(id != null){
         event.preventDefault();
         let tile = GetSelectedTile(event);
-        socket.send(JSON.stringify(new Request('click', {x: tile[0], y: tile[1]})));
+        if(flaggedTiles.findIndex((flagged) => {
+            return (flagged[0] == tile[0]) && (flagged[1] == tile[1]);
+        }) == -1){
+            socket.send(JSON.stringify(new Request('click', {x: tile[0], y: tile[1]})));
+        }
     }
 });
 
