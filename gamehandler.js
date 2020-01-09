@@ -113,7 +113,7 @@ function FakeClaim( map ) { //this function fake claims bombs so that players ca
                                 if(claimant == null && map[x+subx][y+suby].claimant_id != null){
                                     claimant = map[x+subx][y+suby].claimant_id;
                                 }
-                                if(map[x+subx][y+suby].count != 'bomb' && map[x+subx][y+suby].claimant_id == claimant) {
+                                if(map[x+subx][y+suby].count != 'bomb' && map[x+subx][y+suby].claimant_id != claimant) {
                                     claimable = false;
                                 }
                             }
@@ -130,27 +130,10 @@ function FakeClaim( map ) { //this function fake claims bombs so that players ca
     return map;
 }
 
-function GetScores ( map, players ){ ///TODO, move this client side?
-    for(let i = 0; i < players.length; i++){
-        if(players[i] != null){
-            players[i].score = 0;
-        }
-    }
-    for(let x = 0; x < DIMENSIONS; x++){
-        for(let y = 0; y < DIMENSIONS; y++){
-            if(map[x][y].claimant_id != null){
-                if(players[map[x][y].claimant_id] != null){
-                    players[map[x][y].claimant_id].score++;
-                }
-            }
-        }
-    }
-} 
 module.exports = {
     MapGen,
     DeletePlayer,
     ClaimNeighbors,
     GetPlayersMap,
-    GetScores,
     FakeClaim
 };

@@ -32,6 +32,7 @@ wss.on('connection', function connection(ws) {
     var id = null;
 ///TODO add input validation
     ws.on('message', function incoming(message) {
+        console.log(players);
         let req = JSON.parse(message);
         if(req.operation == 'create'){
             if(id != null){
@@ -54,7 +55,7 @@ wss.on('connection', function connection(ws) {
                 } else {
                     if(map[req.data.x][req.data.y].count == 0){
                         map[req.data.x][req.data.y].claimant_id = id;
-                        //map = game.ClaimNeighbors(map, req.data.x, req.data.y, id);
+                        map = game.ClaimNeighbors(map, req.data.x, req.data.y, id);
                     } else {
                         map[req.data.x][req.data.y].claimant_id = id;
                     }
@@ -67,25 +68,24 @@ wss.on('connection', function connection(ws) {
         }
     });
 
-    function updateListener (e, players) {
-        players = game.GetScores(map, players);
-        let res = {
-            id: id,
-            map,
-            players: players
-        }
-        res.map = game.GetPlayersMap(map, id);
-        ws.send(JSON.stringify(res));
-    }
-
     ws.on('close', function closing(e) {
         map = game.DeletePlayer(map, id);
         players[id] = null;
         id = null;
-        updateEmitter.removeListener('update', e => updateListener(e, players));
+        updateEmitter.removeListener('update', e => updateListener(e, id, ws));
         updateEmitter.emit('update');
     });
 
-    updateEmitter.on('update', e => updateListener(e, players));
+    updateEmitter.on('update', e => updateListener(e, id, ws));
     
 });
+
+function updateListener (e, id, ws) {
+    let res = {
+        id: id,
+        map,
+        players: players
+    }
+    res.map = game.GetPlayersMap(map, id);
+    ws.send(JSON.stringify(res));
+}

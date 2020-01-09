@@ -142,6 +142,38 @@ function ClearMap(){
     }
 }
 
+function GetScores (){
+    for(let i = 0; i < players.length; i++){
+        if(players[i] != null){
+            players[i].score = 0;
+        }
+    }
+    for(let x = 0; x < DIMENSIONS; x++){
+        for(let y = 0; y < DIMENSIONS; y++){
+            if(map[x][y].claimant_id != null){
+                if(players[map[x][y].claimant_id] != null){
+                    players[map[x][y].claimant_id].score++;
+                }
+            }
+        }
+    }
+    players.sort(function(a,b){return a.score - b.score});
+    let max = 0;
+    if(players.length < 10){
+        max = players.length;
+    } else {
+        max = 9;
+    }
+    for(let i = 0; i < max; i++){
+        if(players[i] != null){
+            let row = scoreboard.insertRow(i);
+            row.insertCell(0).innertHTML = i+1;
+            row.insertCell(1).innertHTML = players[i].name;
+            row.insertCell(2).innertHTML = players[i].score;
+        }
+    }
+} 
+
 socket.onmessage = function(recieved) {
     if (recieved.data != 'error' && recieved.data != 'loss'){
         ClearMap();
@@ -150,6 +182,8 @@ socket.onmessage = function(recieved) {
         for(let i = 0; i < res.map.length; i++){
             map[res.map[i].x][res.map[i].y] = res.map[i];
         }
+        players = res.players;
+        GetScores();
         DrawAll();
     } else if (recieved.data == 'loss') {
         id = null;
