@@ -4,7 +4,7 @@ const loading = document.getElementsByClassName("loading");
 const menubox = document.getElementById("menubox");
 
 const ctx = canvas.getContext("2d");
-const DIMENSIONS = 1000;
+const DIMENSIONS = 100;
 const socket = new WebSocket('ws' + window.location.href.slice(4, -1) + ':81');
 /*
 if (window.location.href[4] == "s"){

@@ -1,4 +1,4 @@
-const DIMENSIONS = 1000;
+const DIMENSIONS = 100;
 const BOMBS_PER_TILE = 0.2;
 class Tile {
     constructor( x, y ) {    
@@ -119,6 +119,9 @@ function FakeClaim( map ) { //this function fake claims bombs so that players ca
                             }
                         }
                     }
+                }
+                if(claimant == null){
+                    claimable = false;
                 }
                 map[x][y].fake_claimed = claimable;
                 if(claimable){
