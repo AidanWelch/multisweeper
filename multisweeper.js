@@ -20,7 +20,6 @@ class Tile {
         this.y = y;
         this.claimant_id = null;
         this.count = null;
-        this.fake_claimed = false;
     }
 }
 
@@ -100,7 +99,7 @@ function Draw(tile) {
     ctx.fillRect((x * GetTileSize()), (y * GetTileSize()), GetTileSize()-1, GetTileSize()-1);
     if(flaggedTiles.findIndex((flagged) => {
         return (flagged[0] == tile.x) && (flagged[1] == tile.y);
-    }) != -1 || tile.fake_claimed){
+    }) != -1){
         ctx.fillStyle = GetColor(id);
         ctx.fillRect((x * GetTileSize())+10, (y * GetTileSize())+10, GetTileSize()-21, GetTileSize()-21);
         ctx.strokeStyle = colors.walls;

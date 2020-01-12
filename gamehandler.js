@@ -6,7 +6,6 @@ class Tile {
         this.y = y;
         this.claimant_id = null;
         this.count = null;
-        this.fake_claimed = false;
     }
 }
 
@@ -94,49 +93,14 @@ function GetPlayersMap ( map, id ){
     for(let i = 0; i < compressedMap.length; i++){
         if(id === null || compressedMap[i].claimant_id !== id){
             compressedMap[i].count = null;
-            compressedMap[i].fake_claimed = false;
         }
     }
     return compressedMap;
-}
-
-function FakeClaim( map ) { //this function fake claims bombs so that players can't freely claim other land
-    for(let x = 0; x < DIMENSIONS; x++){
-        for(let y = 0; y < DIMENSIONS; y++){
-            if(map[x][y].count == 'bomb') {
-                let claimable = true;
-                let claimant = null;
-                for(let subx = -1; subx <= 1; subx++) {
-                    if((x+subx) >= 0 && (x+subx) < DIMENSIONS) {
-                        for(let suby = -1; suby <= 1; suby++) {
-                            if((y+suby) >= 0 && (y+suby) < DIMENSIONS) {
-                                if(claimant == null && map[x+subx][y+suby].claimant_id != null){
-                                    claimant = map[x+subx][y+suby].claimant_id;
-                                }
-                                if(map[x+subx][y+suby].count != 'bomb' && map[x+subx][y+suby].claimant_id != claimant) {
-                                    claimable = false;
-                                }
-                            }
-                        }
-                    }
-                }
-                if(claimant == null){
-                    claimable = false;
-                }
-                map[x][y].fake_claimed = claimable;
-                if(claimable){
-                    map[x][y].claimant_id = claimant;
-                }
-            }
-        }
-    }
-    return map;
 }
 
 module.exports = {
     MapGen,
     DeletePlayer,
     ClaimNeighbors,
-    GetPlayersMap,
-    FakeClaim
+    GetPlayersMap
 };

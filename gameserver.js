@@ -59,7 +59,6 @@ wss.on('connection', function connection(ws) {
                     } else {
                         map[req.data.x][req.data.y].claimant_id = id;
                     }
-                    map = game.FakeClaim(map);
                     updateEmitter.emit('update');
                 }
             }
