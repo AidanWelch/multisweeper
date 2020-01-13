@@ -31,6 +31,8 @@ var players = null;
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+var tileSizeMultiplier = 1;
+
 window.onresize = () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -71,17 +73,17 @@ function GetColor(id){
 
 function GetTileCount(){
     if(canvas.width < canvas.height){
-        return (Math.floor(canvas.width/50));
+        return (Math.floor(canvas.width/50)) / tileSizeMultiplier;
     } else {
-        return (Math.floor(canvas.height/50));
+        return (Math.floor(canvas.height/50)) / tileSizeMultiplier;
     }
 }
 
 function GetTileSize(){
     if(canvas.width > canvas.height){
-        return (canvas.width/GetTileCount());
+        return (canvas.width/GetTileCount()) * tileSizeMultiplier;
     } else {
-        return (canvas.height/GetTileCount());
+        return (canvas.height/GetTileCount()) * tileSizeMultiplier;
     }
 }
 
@@ -187,7 +189,6 @@ socket.onmessage = function(recieved) {
     } else if (recieved.data == 'loss') {
         id = null;
         flaggedTiles = [];
-        ///TODO loss screen
         if(Game != null){
             Game();
         } else {
@@ -207,7 +208,7 @@ socket.onopen = function(e) {
         menubox.style.display = 'block';
         ClearMap();
         DrawAll();
-        document.getElementById("startbutton").onclick = () =>{ ///TODO add this on enter too 
+        document.getElementById("startbutton").onclick = () =>{
             socket.send(JSON.stringify(new Request('create', {name: document.getElementById("nickname").value})));
             menubox.style.display = 'none';
         };
@@ -281,6 +282,18 @@ window.addEventListener('keydown', (event) => {
         }
     }
 }, false);
+
+window.addEventListener("wheel", event => {
+    if(id != null){
+        event.preventDefault();
+        if(event.deltaY > 0){
+            tileSizeMultiplier += 0.1;
+        } else if (event.deltaY < 0 && tileSizeMultiplier > 0) {
+            tileSizeMultiplier -= 0.1;
+        }
+        DrawAll();
+    }
+});
 
 window.addEventListener('keyup', (event) => {
     event.preventDefault();
