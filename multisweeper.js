@@ -119,8 +119,8 @@ function Draw(tile) {
 
 function DrawAll() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for(let x = view_x; x < GetTileCount() + view_x; x++){
-        for(let y = view_y; y < GetTileCount() + view_y; y++){
+    for(let x = Math.floor(view_x); x < GetTileCount() + Math.floor(view_x); x++){
+        for(let y = Math.floor(view_y); y < GetTileCount() + Math.floor(view_y); y++){
             Draw(map[x][y]);
         }
     }
@@ -220,8 +220,8 @@ function GetSelectedTile(event){
     let bounds = canvas.getBoundingClientRect();
     let x = event.clientX - bounds.left;
     let y = event.clientY - bounds.top;
-    x = Math.floor(x/GetTileSize())+view_x;
-    y = Math.floor(y/GetTileSize())+view_y;
+    x = Math.floor(x/GetTileSize())+Math.floor(view_x);
+    y = Math.floor(y/GetTileSize())+Math.floor(view_y);
     return [x,y];
 }
 
@@ -261,22 +261,22 @@ window.addEventListener('keydown', (event) => {
             scoreboard.style.display = "block";
         } else if (event.key == 'w' || event.key == "ArrowUp") {
             if(view_y > 0){
-                view_y--;
+                view_y -= 0.1;
                 DrawAll();
             }
         } else if (event.key == 's' || event.key == "ArrowDown") {
             if(view_y < DIMENSIONS){
-                view_y++;
+                view_y += 0.1;
                 DrawAll();
             }
         } else if (event.key == 'a' || event.key == "ArrowLeft") {
             if(view_x > 0){
-                view_x--;
+                view_x -= 0.1;
                 DrawAll();
             }
         } else if (event.key == 'd' || event.key == "ArrowRight") {
             if(view_x < DIMENSIONS){
-                view_x++;
+                view_x += 0.1;
                 DrawAll();
             }
         }
