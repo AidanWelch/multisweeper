@@ -30,7 +30,6 @@ function CreatePlayer(name){
 
 wss.on('connection', function connection(ws) {
     var id = null;
-///TODO add input validation
     ws.on('message', function incoming(message) {
         console.log(players);
         let req = JSON.parse(message);
@@ -45,7 +44,7 @@ wss.on('connection', function connection(ws) {
             updateEmitter.emit('update');
         }
         if(id != null){
-            if(req.operation == 'click'){
+            if(req.operation == 'click' && (map[req.data.x][req.data.y].claimant_id == null || map[req.data.x][req.data.y].claimant_id == id)){
                 if(map[req.data.x][req.data.y].count == 'bomb'){
                     map = game.DeletePlayer(map, id);
                     ws.send('loss');
