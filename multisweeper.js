@@ -72,18 +72,18 @@ function GetColor(id){
 }
 
 function GetTileCount(){
-    if(canvas.width < canvas.height){
-        return (Math.floor(canvas.width/50)) / tileSizeMultiplier;
+    if(canvas.width > canvas.height){
+        return Math.ceil(canvas.width / (tileSizeMultiplier*50));
     } else {
-        return (Math.floor(canvas.height/50)) / tileSizeMultiplier;
+        return Math.ceil(canvas.height / (tileSizeMultiplier*50));
     }
 }
 
 function GetTileSize(){
     if(canvas.width > canvas.height){
-        return (canvas.width/GetTileCount()) * tileSizeMultiplier;
+        return Math.ceil(canvas.width/GetTileCount()+1);
     } else {
-        return (canvas.height/GetTileCount()) * tileSizeMultiplier;
+        return Math.ceil(canvas.height/GetTileCount()+1);
     }
 }
 
@@ -103,9 +103,9 @@ function Draw(tile) {
         return (flagged[0] == tile.x) && (flagged[1] == tile.y);
     }) != -1){
         ctx.fillStyle = GetColor(id);
-        ctx.fillRect((x * GetTileSize())+10, (y * GetTileSize())+10, GetTileSize()-21, GetTileSize()-21);
+        ctx.fillRect((x * GetTileSize())+(GetTileSize()*0.1), (y * GetTileSize())+(GetTileSize()*0.1), GetTileSize()-(GetTileSize()*0.21), GetTileSize()-(GetTileSize()*0.21));
         ctx.strokeStyle = colors.walls;
-        ctx.strokeRect((x * GetTileSize())+10, (y * GetTileSize())+10, GetTileSize()-21, GetTileSize()-21);
+        ctx.strokeRect((x * GetTileSize())+(GetTileSize()*0.1), (y * GetTileSize())+(GetTileSize()*0.1), GetTileSize()-(GetTileSize()*0.21), GetTileSize()-(GetTileSize()*0.21));
     }
     if(tile.count > 0){
         ctx.font = `${GetTileSize()}px Verdana`;
