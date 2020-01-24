@@ -31,7 +31,6 @@ function CreatePlayer(name){
 wss.on('connection', function connection(ws) {
     var id = null;
     ws.on('message', function incoming(message) {
-        console.log(players);
         let req = JSON.parse(message);
         if(req.operation == 'create'){
             if(id != null){

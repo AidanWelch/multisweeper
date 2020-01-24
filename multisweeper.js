@@ -119,8 +119,10 @@ function Draw(tile) {
 
 function DrawAll() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for(let x = Math.floor(view_x); x < GetTileCount() + Math.floor(view_x); x++){
-        for(let y = Math.floor(view_y); y < GetTileCount() + Math.floor(view_y); y++){
+    let x_max = Math.min(GetTileCount(), DIMENSIONS - (Math.floor(view_x)+GetTileCount()));
+    let y_max = Math.min(GetTileCount(), DIMENSIONS - (Math.floor(view_y)+GetTileCount()));
+    for(let x = Math.floor(view_x); x < x_max + Math.floor(view_x); x++){
+        for(let y = Math.floor(view_y); y < y_max + Math.floor(view_y); y++){
             Draw(map[x][y]);
         }
     }
@@ -220,8 +222,8 @@ function GetSelectedTile(event){
     let bounds = canvas.getBoundingClientRect();
     let x = event.clientX - bounds.left;
     let y = event.clientY - bounds.top;
-    x = Math.floor(x/GetTileSize())+Math.floor(view_x);
-    y = Math.floor(y/GetTileSize())+Math.floor(view_y);
+    x = Math.floor(x/GetTileSize())+Math.ceil(view_x);
+    y = Math.floor(y/GetTileSize())+Math.ceil(view_y);
     return [x,y];
 }
 
@@ -256,27 +258,28 @@ canvas.addEventListener('click', function(event) {
 
 window.addEventListener('keydown', (event) => {
     if(id != null){
+        let step = 0.1*(1/tileSizeMultiplier);
         event.preventDefault();
         if(event.key == 'Tab'){
             scoreboard.style.display = "block";
         } else if (event.key == 'w' || event.key == "ArrowUp") {
-            if(view_y > 0){
-                view_y -= 0.1;
+            if(view_y > step){
+                view_y -= step;
                 DrawAll();
             }
         } else if (event.key == 's' || event.key == "ArrowDown") {
             if(view_y < DIMENSIONS){
-                view_y += 0.1;
+                view_y += step;
                 DrawAll();
             }
         } else if (event.key == 'a' || event.key == "ArrowLeft") {
-            if(view_x > 0){
-                view_x -= 0.1;
+            if(view_x > 0.1){
+                view_x -= step;
                 DrawAll();
             }
         } else if (event.key == 'd' || event.key == "ArrowRight") {
             if(view_x < DIMENSIONS){
-                view_x += 0.1;
+                view_x += step;
                 DrawAll();
             }
         }
@@ -285,7 +288,6 @@ window.addEventListener('keydown', (event) => {
 
 window.addEventListener("wheel", event => {
     if(id != null){
-        event.preventDefault();
         if(event.deltaY > 0){
             tileSizeMultiplier += 0.1;
         } else if (event.deltaY < 0 && tileSizeMultiplier > 0) {

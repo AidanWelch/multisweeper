@@ -1,5 +1,5 @@
 const DIMENSIONS = 100;
-const BOMBS_PER_TILE = 0.2;
+const BOMBS_PER_TILE = 0.175;
 class Tile {
     constructor( x, y ) {    
         this.x = x;
@@ -53,7 +53,7 @@ function DeletePlayer( map, id ) {
         for(let y = 0; y < DIMENSIONS; y++){
             if(map[x][y].claimant_id == id){
                 map[x][y].claimant_id = null;
-                if(Math.random() < BOMBS_PER_TILE){
+                if(false){//Math.random() < BOMBS_PER_TILE){
                     map[x][y].count = 'bomb';
                 }  else  {
                     map[x][y].count = null;
@@ -70,7 +70,9 @@ function ClaimNeighbors ( map, x, y, id ){
         if((x+subx) >= 0 && (x+subx) < DIMENSIONS) {
             for(let suby = -1; suby <= 1; suby++) {
                 if((y+suby) >= 0 && (y+suby) < DIMENSIONS) {
-                    map[x+subx][y+suby].claimant_id = id;
+                    if(map[x+subx][y+suby].claimant_id == null){
+                        map[x+subx][y+suby].claimant_id = id;
+                    }
                     //if(map[x+subx][y+suby].count == 0) {    /DEPRECATED\
                         //map = ClaimNeighbors(map, x+subx, y+suby, id);    /DEPRECATED\
                     //}    /DEPRECATED\
