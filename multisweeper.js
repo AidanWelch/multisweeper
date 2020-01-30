@@ -119,16 +119,16 @@ function Draw(tile) {
 
 function DrawAll() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    let x_max = GetTileCount();
-    let y_max = GetTileCount();
+    let x_max = GetTileCount() + Math.floor(view_x);
+    let y_max = GetTileCount() + Math.floor(view_y);
     if(DIMENSIONS - (Math.floor(view_x)+GetTileCount()) < x_max){
         x_max = DIMENSIONS;
     }
     if(DIMENSIONS - (Math.floor(view_y)+GetTileCount()) < x_max){
         y_max = DIMENSIONS;
     }
-    for(let x = Math.floor(view_x); x < x_max + Math.floor(view_x); x++){
-        for(let y = Math.floor(view_y); y < y_max + Math.floor(view_y); y++){
+    for(let x = Math.floor(view_x); x < x_max; x++){
+        for(let y = Math.floor(view_y); y < y_max; y++){
             Draw(map[x][y]);
         }
     }
