@@ -121,10 +121,10 @@ function DrawAll() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     let x_max = GetTileCount() + Math.floor(view_x);
     let y_max = GetTileCount() + Math.floor(view_y);
-    if(DIMENSIONS - (Math.floor(view_x)+GetTileCount()) < x_max){
+    if(DIMENSIONS - (Math.floor(view_x)+GetTileCount()) < GetTileCount()){
         x_max = DIMENSIONS;
     }
-    if(DIMENSIONS - (Math.floor(view_y)+GetTileCount()) < x_max){
+    if(DIMENSIONS - (Math.floor(view_y)+GetTileCount()) < GetTileCount()){
         y_max = DIMENSIONS;
     }
     for(let x = Math.floor(view_x); x < x_max; x++){
