@@ -119,8 +119,14 @@ function Draw(tile) {
 
 function DrawAll() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    let x_max = Math.min(GetTileCount(), DIMENSIONS - (Math.floor(view_x)+GetTileCount()));
-    let y_max = Math.min(GetTileCount(), DIMENSIONS - (Math.floor(view_y)+GetTileCount()));
+    let x_max = GetTileCount();
+    let y_max = GetTileCount();
+    if(DIMENSIONS - (Math.floor(view_x)+GetTileCount()) < x_max){
+        x_max = DIMENSIONS;
+    }
+    if(DIMENSIONS - (Math.floor(view_y)+GetTileCount()) < x_max){
+        y_max = DIMENSIONS;
+    }
     for(let x = Math.floor(view_x); x < x_max + Math.floor(view_x); x++){
         for(let y = Math.floor(view_y); y < y_max + Math.floor(view_y); y++){
             Draw(map[x][y]);
@@ -222,8 +228,8 @@ function GetSelectedTile(event){
     let bounds = canvas.getBoundingClientRect();
     let x = event.clientX - bounds.left;
     let y = event.clientY - bounds.top;
-    x = Math.floor(x/GetTileSize())+Math.ceil(view_x);
-    y = Math.floor(y/GetTileSize())+Math.ceil(view_y);
+    x = Math.floor(x/GetTileSize())+Math.floor(view_x);
+    y = Math.floor(y/GetTileSize())+Math.floor(view_y);
     return [x,y];
 }
 
@@ -290,7 +296,7 @@ window.addEventListener("wheel", event => {
     if(id != null){
         if(event.deltaY > 0){
             tileSizeMultiplier += 0.1;
-        } else if (event.deltaY < 0 && tileSizeMultiplier > 0) {
+        } else if (event.deltaY < 0 && tileSizeMultiplier > 0.1) {
             tileSizeMultiplier -= 0.1;
         }
         DrawAll();
