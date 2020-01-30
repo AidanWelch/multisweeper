@@ -264,25 +264,29 @@ canvas.addEventListener('click', function(event) {
 
 window.addEventListener('keydown', (event) => {
     if(id != null){
-        let step = 0.1*(1/tileSizeMultiplier);
+        let step = 0.2*(1/tileSizeMultiplier);
         event.preventDefault();
         if(event.key == 'Tab'){
             scoreboard.style.display = "block";
         } else if (event.key == 'w' || event.key == "ArrowUp") {
             if(view_y > step){
                 view_y -= step;
-                DrawAll();
+            } else {
+                view_y = 0;
             }
+            DrawAll();
         } else if (event.key == 's' || event.key == "ArrowDown") {
             if(view_y < DIMENSIONS){
                 view_y += step;
                 DrawAll();
             }
         } else if (event.key == 'a' || event.key == "ArrowLeft") {
-            if(view_x > 0.1){
+            if(view_x > step){
                 view_x -= step;
-                DrawAll();
+            } else {
+                view_x = 0;
             }
+            DrawAll();
         } else if (event.key == 'd' || event.key == "ArrowRight") {
             if(view_x < DIMENSIONS){
                 view_x += step;
