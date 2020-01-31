@@ -88,7 +88,7 @@ function GetTileSize(){
 }
 
 function CenterOnPoint( x, y ) {
-    
+
 }
 
 var view_x = 0;
@@ -232,8 +232,8 @@ function GetSelectedTile(event){
     let bounds = canvas.getBoundingClientRect();
     let x = event.clientX - bounds.left;
     let y = event.clientY - bounds.top;
-    x = Math.floor(x/GetTileSize())+Math.floor(view_x);
-    y = Math.floor(y/GetTileSize())+Math.floor(view_y);
+    x = Math.floor(x/GetTileSize()+view_x);
+    y = Math.floor(y/GetTileSize()+view_y);
     return [x,y];
 }
 
