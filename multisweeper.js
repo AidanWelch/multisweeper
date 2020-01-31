@@ -87,6 +87,10 @@ function GetTileSize(){
     }
 }
 
+function CenterOnPoint( x, y ) {
+    
+}
+
 var view_x = 0;
 var view_y = 0;
 

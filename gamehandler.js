@@ -100,9 +100,32 @@ function GetPlayersMap ( map, id ){
     return compressedMap;
 }
 
+function SpawnPlayer ( map, id ){
+    let selectedTile = null;
+    for(let i = 0; i < 9; i++){
+        let usableTiles = [];
+        for(let x = 0; x < DIMENSIONS; x++){
+            for(let y = 0; y < DIMENSIONS; y++){
+                if(map[x][y].count === i && map[x][y].claimant_id === null){
+                    usableTiles.push(map[x][y]);
+                }
+            }
+        }
+        if (usableTiles.length != 0) {
+            selectedTile = usableTiles[Math.floor(Math.random()*usableTiles.length)];
+            map[selectedTile.x][selectedTile.y].claimant_id = id;
+            if(map[selectedTile.x][selectedTile.y].count == 0){
+                map = ClaimNeighbors(map, selectedTile.x, selectedTile.y, id);
+            }
+            return map;
+        }
+    }
+}
+
 module.exports = {
     MapGen,
     DeletePlayer,
     ClaimNeighbors,
-    GetPlayersMap
+    GetPlayersMap,
+    SpawnPlayer
 };

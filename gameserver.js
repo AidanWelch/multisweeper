@@ -39,6 +39,7 @@ wss.on('connection', function connection(ws) {
                 id = null;
             }
             id = CreatePlayer(req.data.name);
+            map = game.SpawnPlayer(map, id);
             console.log(`Played ${id} created`);
             updateEmitter.emit('update');
         }
