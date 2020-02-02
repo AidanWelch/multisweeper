@@ -88,7 +88,8 @@ function GetTileSize(){
 }
 
 function CenterOnPoint( x, y ) {
-
+    view_x = Math.floor(x/2);
+    view_y = Math.floor(y/2);
 }
 
 var view_x = 0;
@@ -303,8 +304,12 @@ window.addEventListener('keydown', (event) => {
 window.addEventListener("wheel", event => {
     if(id != null){
         if(event.deltaY > 0){
+            let tile = GetSelectedTile(event);
+            CenterOnPoint(tile[0], tile[1]);
             tileSizeMultiplier += 0.1;
         } else if (event.deltaY < 0 && tileSizeMultiplier > 0.1) {
+            let tile = GetSelectedTile(event);
+            CenterOnPoint(tile[0], tile[1]);
             tileSizeMultiplier -= 0.1;
         }
         DrawAll();
