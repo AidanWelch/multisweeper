@@ -87,9 +87,11 @@ function GetTileSize(){
     }
 }
 
-function CenterOnPoint( x, y ) {
-    view_x = Math.floor(x/2);
-    view_y = Math.floor(y/2);
+function ZoomWithAnchor( oldx, oldy, event ) {
+    let [curx, cury] = GetSelectedTile(event);
+    view_x += oldx-curx;
+    view_y += oldy-cury;
+    
 }
 
 var view_x = 0;
@@ -126,14 +128,16 @@ function DrawAll() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     let x_max = GetTileCount() + Math.floor(view_x);
     let y_max = GetTileCount() + Math.floor(view_y);
+    let x_min = Math.max(Math.floor(view_x), 0);
+    let y_min = Math.max(Math.floor(view_y), 0);
     if(DIMENSIONS - (Math.floor(view_x)+GetTileCount()) < GetTileCount()){
         x_max = DIMENSIONS;
     }
     if(DIMENSIONS - (Math.floor(view_y)+GetTileCount()) < GetTileCount()){
         y_max = DIMENSIONS;
     }
-    for(let x = Math.floor(view_x); x < x_max; x++){
-        for(let y = Math.floor(view_y); y < y_max; y++){
+    for(let x = x_min; x < x_max; x++){
+        for(let y = y_min; y < y_max; y++){
             Draw(map[x][y]);
         }
     }
@@ -274,29 +278,17 @@ window.addEventListener('keydown', (event) => {
         if(event.key == 'Tab'){
             scoreboard.style.display = "block";
         } else if (event.key == 'w' || event.key == "ArrowUp") {
-            if(view_y > step){
-                view_y -= step;
-            } else {
-                view_y = 0;
-            }
+            view_y -= step;
             DrawAll();
         } else if (event.key == 's' || event.key == "ArrowDown") {
-            if(view_y < DIMENSIONS){
-                view_y += step;
-                DrawAll();
-            }
+            view_y += step;
+            DrawAll();
         } else if (event.key == 'a' || event.key == "ArrowLeft") {
-            if(view_x > step){
-                view_x -= step;
-            } else {
-                view_x = 0;
-            }
+            view_x -= step;
             DrawAll();
         } else if (event.key == 'd' || event.key == "ArrowRight") {
-            if(view_x < DIMENSIONS){
-                view_x += step;
-                DrawAll();
-            }
+            view_x += step;
+            DrawAll();
         }
     }
 }, false);
@@ -305,12 +297,12 @@ window.addEventListener("wheel", event => {
     if(id != null){
         if(event.deltaY > 0){
             let tile = GetSelectedTile(event);
-            CenterOnPoint(tile[0], tile[1]);
             tileSizeMultiplier += 0.1;
+            ZoomWithAnchor(tile[0], tile[1], event);
         } else if (event.deltaY < 0 && tileSizeMultiplier > 0.1) {
             let tile = GetSelectedTile(event);
-            CenterOnPoint(tile[0], tile[1]);
             tileSizeMultiplier -= 0.1;
+            ZoomWithAnchor(tile[0], tile[1], event);
         }
         DrawAll();
     }
