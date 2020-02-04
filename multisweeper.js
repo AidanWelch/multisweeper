@@ -190,12 +190,26 @@ function GetScores (){
             row.insertCell(2).innertHTML = players[i].score;
         }
     }
-} 
+}
+
+function CenterOnSpawn (map) {
+    let spawnpoint = map.findIndex(tile => {
+        if(tile.claimant_id == id){
+            return true;
+        }
+    });
+    view_x = map[spawnpoint].x - (Math.ceil(canvas.width / (tileSizeMultiplier*50))/2);
+    view_y = map[spawnpoint].y - (Math.ceil(canvas.height / (tileSizeMultiplier*50))/2);
+}
 
 socket.onmessage = function(recieved) {
     if (recieved.data != 'error' && recieved.data != 'loss'){
         ClearMap();
         let res = JSON.parse(recieved.data);
+        if(id == null){
+            id = res.id;
+            CenterOnSpawn(res.map);
+        }
         id = res.id;
         for(let i = 0; i < res.map.length; i++){
             map[res.map[i].x][res.map[i].y] = res.map[i];
