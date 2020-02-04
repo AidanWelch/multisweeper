@@ -198,6 +198,7 @@ function CenterOnSpawn (map) {
             return true;
         }
     });
+    tileSizeMultiplier = 1;
     view_x = map[spawnpoint].x - (Math.ceil(canvas.width / (tileSizeMultiplier*50))/2);
     view_y = map[spawnpoint].y - (Math.ceil(canvas.height / (tileSizeMultiplier*50))/2);
 }
