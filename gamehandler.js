@@ -122,10 +122,19 @@ function SpawnPlayer ( map, id ){
     }
 }
 
+function TileCompare ( tile1, tile2 ){
+    let xbool = (tile1.x == tile2.x);
+    let ybool = (tile1.y == tile2.y);
+    let claimant_idbool = (tile1.claimant_id == tile2.claimant_id);
+    let countbool = (tile1.count == tile2.count);
+    return (xbool && ybool && claimant_idbool && countbool);
+}
+
 module.exports = {
     MapGen,
     DeletePlayer,
     ClaimNeighbors,
     GetPlayersMap,
-    SpawnPlayer
+    SpawnPlayer,
+    TileCompare
 };
