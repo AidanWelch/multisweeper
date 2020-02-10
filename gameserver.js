@@ -30,7 +30,6 @@ function CreatePlayer(name){
 
 wss.on('connection', function connection(ws) {
     var id = null;
-    var last_map = [];
 
     ws.on('message', function incoming(message) {
         let req = JSON.parse(message);
@@ -39,7 +38,6 @@ wss.on('connection', function connection(ws) {
                 map = game.DeletePlayer(map, id);
                 players[id] = null;
                 id = null;
-                last_map = [];
             }
             id = CreatePlayer(req.data.name);
             map = game.SpawnPlayer(map, id);
@@ -54,7 +52,6 @@ wss.on('connection', function connection(ws) {
                     players[id] = null;
                     id = null;
                     updateEmitter.emit('update');
-                    last_map = [];
                 } else {
                     if(map[req.data.x][req.data.y].count == 0){
                         map[req.data.x][req.data.y].claimant_id = id;
@@ -76,35 +73,7 @@ wss.on('connection', function connection(ws) {
             map,
             players: players
         }
-        let players_map = game.GetPlayersMap(map, id);
-        if(players_map.length < last_map.length){
-            res.map = last_map.filter(tile => {
-                if(players_map.length === 0){
-                    return true;
-                }
-                for(let i = 0; i < players_map.length; i++){
-                    if(!game.TileCompare(tile, players_map[i])){
-                        return true;
-                    }
-                }
-                return false;
-            });
-        } else {
-            res.map = players_map.filter((tile) => {
-                if(last_map.length === 0){
-                    return true;
-                }
-                for(let i = 0; i < last_map.length; i++){
-                    if (game.TileCompare(tile, last_map[i])){
-                        return false;
-                    }
-                }
-                return true;
-            });
-        }
-        console.log(last_map);
-        console.log(last_map.length);
-        last_map = last_map.concat(res.map);
+        res.map = game.GetPlayersMap(map, id);
         ws.send(JSON.stringify(res));
     }
 
