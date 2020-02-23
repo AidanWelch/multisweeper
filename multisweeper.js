@@ -1,5 +1,5 @@
 const canvas = document.querySelector("canvas");
-const scoreboard = document.getElementById("scoreboard");
+const scoreboard = document.querySelector("table");
 const loading = document.getElementsByClassName("loading");
 const menubox = document.getElementById("menubox");
 
@@ -288,7 +288,7 @@ canvas.addEventListener('click', function(event) {
 
 window.addEventListener('keydown', (event) => {
     if(id != null){
-        let step = 0.2*(1/tileSizeMultiplier);
+        let step = Math.log(10*(1/tileSizeMultiplier));
         event.preventDefault();
         if(event.key == 'Tab'){
             scoreboard.style.display = "block";
@@ -310,7 +310,7 @@ window.addEventListener('keydown', (event) => {
 
 window.addEventListener("wheel", event => {
     if(id != null){
-        if(event.deltaY > 0){
+        if(event.deltaY > 0 && tileSizeMultiplier < 10){
             let tile = GetSelectedTile(event);
             tileSizeMultiplier += 0.1;
             ZoomWithAnchor(tile[0], tile[1], event);

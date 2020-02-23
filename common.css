@@ -24,7 +24,7 @@ h1 {
 	margin: auto auto;
 }
 
-#scoreboard {
+table {
 	display: none;
 	top: 5%;
 	bottom: 5%;
