@@ -24,22 +24,27 @@ h1 {
 	margin: auto auto;
 }
 
-#scoreboard {
-	position: absolute;
+table {
 	display: none;
 	top: 5%;
-	margin-left: 10%;
-	margin-right: 10%;
-	width: 80%;
-	font-size: 10vmin;
-	border-collapse: collapse;
+	bottom: 5%;
+	left: 10%;
+	right: 10%;
+	position: absolute;
+	background-color: rgba(150, 150, 150, 0.4);
 }
 
 table, th, td {
 	border: 5px solid black;
-	background-color: rgba(150, 150, 150, 0.4);
+	border-collapse: collapse;
 }
 
+th, td {
+	width: 33%;
+	height: 8%;
+	font-size: 10vmin;
+}
+	
 form {
 	display: none;
 }
