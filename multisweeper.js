@@ -190,6 +190,7 @@ function GetScores (){
             row.insertCell(2).appendChild(document.createTextNode(players[i].score));
         }
     }
+    //updated these nodes with rows[i].cells[i].textContent = thing
 }
 
 function CenterOnSpawn (map) {
