@@ -184,10 +184,10 @@ function GetScores (){
     }
     for(let i = 0; i < max; i++){
         if(players[i] != null){
-            let row = scoreboard.insertRow(i);
-            row.insertCell(0).innertHTML = i+1;
-            row.insertCell(1).innertHTML = players[i].name;
-            row.insertCell(2).innertHTML = players[i].score;
+            let row = scoreboard.insertRow(-1);
+            row.insertCell(0).appendChild(document.createTextNode(i+1));
+            row.insertCell(1).appendChild(document.createTextNode(players[i].name));
+            row.insertCell(2).appendChild(document.createTextNode(players[i].score));
         }
     }
 }
