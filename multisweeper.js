@@ -182,12 +182,29 @@ function GetScores (){
     } else {
         max = 9;
     }
-    for(let i = 0; i < max; i++){
+    if(max < scoreboard.rows.length){
+        for (let i = max; i < scoreboard.rows.length; i++){
+            if(i != 0){
+                scoreboard.deleteRow(i);
+            }
+            
+        }
+    }
+    for(let i = 1; i < max; i++){
         if(players[i] != null){
-            let row = scoreboard.insertRow(-1);
-            row.insertCell(0).appendChild(document.createTextNode(i+1));
-            row.insertCell(1).appendChild(document.createTextNode(players[i].name));
-            row.insertCell(2).appendChild(document.createTextNode(players[i].score));
+            if(scoreboard.rows[i]){
+                let row = scoreboard.rows[i];
+                row.cells[0].textContent = i+1;
+                row.cells[1].textContent = players[i].name;
+                row.cells[2].textContent = players[i].score;
+            } else {
+                let row = scoreboard.insertRow(-1);
+                row.insertCell(0).appendChild(document.createTextNode(i+1));
+                row.insertCell(1).appendChild(document.createTextNode(players[i].name));
+                row.insertCell(2).appendChild(document.createTextNode(players[i].score));
+            }
+        } else {
+            scoreboard.deleteRow(i);
         }
     }
     //updated these nodes with rows[i].cells[i].textContent = thing
