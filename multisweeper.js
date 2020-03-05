@@ -182,7 +182,7 @@ function GetScores (){
     } else {
         max = 9;
     }
-    if(max < scoreboard.rows.length){
+    if(max < scoreboard.rows.length-1){
         for (let i = max; i < scoreboard.rows.length; i++){
             if(i != 0){
                 scoreboard.deleteRow(i);
@@ -190,10 +190,10 @@ function GetScores (){
             
         }
     }
-    for(let i = 1; i < max; i++){
+    for(let i = 0; i < max; i++){
         if(players[i] != null){
-            if(scoreboard.rows[i]){
-                let row = scoreboard.rows[i];
+            if(scoreboard.rows[i+1]){
+                let row = scoreboard.rows[i+1];
                 row.cells[0].textContent = i+1;
                 row.cells[1].textContent = players[i].name;
                 row.cells[2].textContent = players[i].score;
@@ -204,7 +204,7 @@ function GetScores (){
                 row.insertCell(2).appendChild(document.createTextNode(players[i].score));
             }
         } else {
-            scoreboard.deleteRow(i);
+            scoreboard.deleteRow(i+1);
         }
     }
     //updated these nodes with rows[i].cells[i].textContent = thing
