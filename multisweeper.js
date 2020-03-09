@@ -187,7 +187,7 @@ function GetScores (){
         }
     });
     let max = 0;
-    if(players.length < 10){
+    if(players.length <= 10){
         max = players.length;
     } else {
         max = 9;
@@ -218,6 +218,7 @@ function GetScores (){
             }
         }
     }
+    
 }
 
 function CenterOnSpawn (map) {
