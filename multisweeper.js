@@ -175,21 +175,30 @@ function GetScores (){
             }
         }
     }
-    players.sort(function(a,b){return a.score - b.score});
+    players.sort(function(a,b){
+        if(a != null && b != null){
+            return b.score - a.score;
+        } else {
+            if(a == null){
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+    });
     let max = 0;
     if(players.length < 10){
         max = players.length;
     } else {
         max = 9;
     }
-    if(max < scoreboard.rows.length-1){
-        for (let i = max; i < scoreboard.rows.length; i++){
-            if(i != 0){
-                scoreboard.deleteRow(i);
-            }
-            
-        }
+
+    //This whole function is a messy debacle, it works, by some black magic previous attempts didn't
+    //if you want to clean it up, feel free to try I guess.
+    for(let i = 1; i < scoreboard.rows.length; i++){
+        scoreboard.deleteRow(i);
     }
+
     for(let i = 0; i < max; i++){
         if(players[i] != null){
             if(scoreboard.rows[i+1]){
@@ -204,10 +213,11 @@ function GetScores (){
                 row.insertCell(2).appendChild(document.createTextNode(players[i].score));
             }
         } else {
-            scoreboard.deleteRow(i+1);
+            if(scoreboard.rows.length === i+2) {
+                scoreboard.deleteRow(i);
+            }
         }
     }
-    //updated these nodes with rows[i].cells[i].textContent = thing
 }
 
 function CenterOnSpawn (map) {
