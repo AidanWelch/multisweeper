@@ -33,6 +33,8 @@ canvas.height = window.innerHeight;
 
 var tileSizeMultiplier = 1;
 
+var showScoreboard = false;
+
 window.onresize = () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -141,6 +143,9 @@ function DrawAll() {
             Draw(map[x][y]);
         }
     }
+    if(showScoreboard){
+        DrawScores(GetScores());
+    }
 }
 
 function ClearMap(){
@@ -157,6 +162,13 @@ function ClearMap(){
                 map[x][y] = new Tile(x,y);
             }
         }
+    }
+}
+
+function DrawScores (scores){
+    function DrawRow (score, place) {
+        ctx.fillRect(0.1*canvas.width, 0.05*place*canvas.height, canvas.width*0.2, canvas.height*0.05);
+        ctx.font = `${GetTileSize()}px Verdana`;
     }
 }
 
@@ -192,7 +204,8 @@ function GetScores (){
     } else {
         max = 9;
     }
-
+    return players.slice(0, max);
+    /*
     //This whole function is a messy debacle, it works, by some black magic previous attempts didn't
     //if you want to clean it up, feel free to try I guess.
     for(let i = 1; i < scoreboard.rows.length; i++){
@@ -218,7 +231,7 @@ function GetScores (){
             }
         }
     }
-    
+    */
 }
 
 function CenterOnSpawn (map) {
