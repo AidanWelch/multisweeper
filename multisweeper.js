@@ -167,8 +167,24 @@ function ClearMap(){
 
 function DrawScores (scores){
     function DrawRow (score, place) {
-        ctx.fillRect(0.1*canvas.width, 0.05*place*canvas.height, canvas.width*0.2, canvas.height*0.05);
-        ctx.font = `${GetTileSize()}px Verdana`;
+        ctx.lineWidth = 5;
+        ctx.globalAlpha = 0.5;
+        ctx.fillStyle = GetColor(score.id);
+        ctx.fillRect(0.1*canvas.width, 0.05*place*canvas.height, canvas.width*0.8, canvas.height*0.05);
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = colors.walls;
+        ctx.strokeStyle = colors.walls;
+        ctx.font = `${Math.floor(canvas.height*0.05)}px Verdana`;
+        ctx.strokeRect(0.1*canvas.width, 0.05*place*canvas.height, canvas.width*0.1, canvas.height*0.05);
+        ctx.fillText(place, 0.11*canvas.width, (canvas.height*0.49*place) + Math.floor(0.05*canvas.height));
+        ctx.strokeRect(0.2*canvas.width, 0.05*place*canvas.height, canvas.width*0.55, canvas.height*0.05);
+        ctx.fillText(score.name, 0.21*canvas.width, Math.floor(1.9*0.05*place*canvas.height));
+        ctx.strokeRect(0.75*canvas.width, 0.05*place*canvas.height, 0.15*canvas.width, canvas.height*0.05);
+        ctx.fillText(score.score, 0.76*canvas.width, Math.floor(1.9*0.05*place*canvas.height));
+        ctx.lineWidth = 1;
+    }
+    for(let i = 0; i < scores.length; i++){
+        DrawRow(scores[i], i+1);
     }
 }
 
@@ -205,33 +221,6 @@ function GetScores (){
         max = 9;
     }
     return players.slice(0, max);
-    /*
-    //This whole function is a messy debacle, it works, by some black magic previous attempts didn't
-    //if you want to clean it up, feel free to try I guess.
-    for(let i = 1; i < scoreboard.rows.length; i++){
-        scoreboard.deleteRow(i);
-    }
-
-    for(let i = 0; i < max; i++){
-        if(players[i] != null){
-            if(scoreboard.rows[i+1]){
-                let row = scoreboard.rows[i+1];
-                row.cells[0].textContent = i+1;
-                row.cells[1].textContent = players[i].name;
-                row.cells[2].textContent = players[i].score;
-            } else {
-                let row = scoreboard.insertRow(-1);
-                row.insertCell(0).appendChild(document.createTextNode(i+1));
-                row.insertCell(1).appendChild(document.createTextNode(players[i].name));
-                row.insertCell(2).appendChild(document.createTextNode(players[i].score));
-            }
-        } else {
-            if(scoreboard.rows.length === i+2) {
-                scoreboard.deleteRow(i);
-            }
-        }
-    }
-    */
 }
 
 function CenterOnSpawn (map) {
@@ -333,7 +322,8 @@ window.addEventListener('keydown', (event) => {
         let step = Math.log(10*(1/tileSizeMultiplier));
         event.preventDefault();
         if(event.key == 'Tab'){
-            scoreboard.style.display = "block";
+            showScoreboard = true;
+            DrawAll();
         } else if (event.key == 'w' || event.key == "ArrowUp") {
             view_y -= step;
             DrawAll();
@@ -368,6 +358,7 @@ window.addEventListener("wheel", event => {
 window.addEventListener('keyup', (event) => {
     event.preventDefault();
     if(event.key == 'Tab'){
-        scoreboard.style.display = "none";
+        showScoreboard = false;
+        DrawAll();
     }
 }, false);
