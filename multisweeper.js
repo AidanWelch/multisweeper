@@ -176,11 +176,11 @@ function DrawScores (scores){
         ctx.strokeStyle = colors.walls;
         ctx.font = `${Math.floor(canvas.height*0.05)}px Verdana`;
         ctx.strokeRect(0.1*canvas.width, 0.05*place*canvas.height, canvas.width*0.1, canvas.height*0.05);
-        ctx.fillText(place, 0.11*canvas.width, (canvas.height*0.49*place) + Math.floor(0.05*canvas.height));
+        ctx.fillText(place, 0.11*canvas.width, Math.round(canvas.height*0.05*place) + Math.round(0.05*canvas.height) - 3);
         ctx.strokeRect(0.2*canvas.width, 0.05*place*canvas.height, canvas.width*0.55, canvas.height*0.05);
-        ctx.fillText(score.name, 0.21*canvas.width, Math.floor(1.9*0.05*place*canvas.height));
+        ctx.fillText(score.name, 0.21*canvas.width, Math.round(canvas.height*0.05*place) + Math.round(0.05*canvas.height) - 3);
         ctx.strokeRect(0.75*canvas.width, 0.05*place*canvas.height, 0.15*canvas.width, canvas.height*0.05);
-        ctx.fillText(score.score, 0.76*canvas.width, Math.floor(1.9*0.05*place*canvas.height));
+        ctx.fillText(score.score, 0.76*canvas.width, Math.round(canvas.height*0.05*place) + Math.round(0.05*canvas.height) - 3);
         ctx.lineWidth = 1;
     }
     for(let i = 0; i < scores.length; i++){
