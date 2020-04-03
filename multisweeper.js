@@ -28,6 +28,8 @@ var map = [];
 var id = null;
 var players = null;
 
+var lastScore = null;
+
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -166,6 +168,15 @@ function ClearMap(){
 }
 
 function DrawScores (scores){
+    let max = 0;
+    if(scores.length <= 10){
+        max = scores.length;
+    } else {
+        max = 10;
+        scores.splice(9, 0, scores.splice(scores[GetPlayerScoreIndex(scores)], 1)); //this is definetly the simplest way to put the player that the end of the scoreboard
+    }
+    scores = scores.slice(0, max);
+
     function DrawRow (score, place) {
         ctx.lineWidth = 5;
         ctx.globalAlpha = 0.5;
@@ -189,21 +200,22 @@ function DrawScores (scores){
 }
 
 function GetScores (){
-    for(let i = 0; i < players.length; i++){
-        if(players[i] != null){
-            players[i].score = 0;
+    let scores = players;
+    for(let i = 0; i < scores.length; i++){
+        if(scores[i] != null){
+            scores[i].score = 0;
         }
     }
     for(let x = 0; x < DIMENSIONS; x++){
         for(let y = 0; y < DIMENSIONS; y++){
             if(map[x][y].claimant_id != null){
-                if(players[map[x][y].claimant_id] != null){
-                    players[map[x][y].claimant_id].score++;
+                if(scores[map[x][y].claimant_id] != null){
+                    scores[map[x][y].claimant_id].score++;
                 }
             }
         }
     }
-    players.sort(function(a,b){
+    scores.sort(function(a,b){
         if(a != null && b != null){
             return b.score - a.score;
         } else {
@@ -214,13 +226,11 @@ function GetScores (){
             }
         }
     });
-    let max = 0;
-    if(players.length <= 10){
-        max = players.length;
-    } else {
-        max = 9;
-    }
-    return players.slice(0, max);
+    return scores;
+}
+
+function GetPlayerScoreIndex (scores){
+    return scores.findIndex((score) => score.id === id);
 }
 
 function CenterOnSpawn (map) {
@@ -250,12 +260,13 @@ socket.onmessage = function(recieved) {
         GetScores();
         DrawAll();
     } else if (recieved.data == 'loss') {
+        lastScore = players[GetPlayerScoreIndex(players)].score;
         id = null;
         flaggedTiles = [];
         if(Game != null){
             Game();
         } else {
-            alert("Something went wrong, please refresh the page.");
+            alert("Somehow you lost before starting the game, please refresh the page.");
         }
     } else {
         alert("Somehow you managed to avoid creating an account, please refresh the page.");
@@ -268,7 +279,12 @@ socket.onopen = function(e) {
         loading[i].style.display = "none";
     }
     Game = function () {
-        menubox.style.display = 'block';
+        menubox.style.display = "block";
+        if(lastScore != null){
+            let lastScoreText = document.getElementById("lastscore");
+            lastScoreText.innerHTML = `You lost!  Your score was ${lastScore}`;
+            lastScoreText.style.display = "block";
+        }
         ClearMap();
         DrawAll();
         document.getElementById("startbutton").onclick = () =>{

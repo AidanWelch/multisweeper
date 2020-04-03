@@ -45,7 +45,7 @@ th, td {
 	font-size: 10vmin;
 }
 
-form {
+form, #lastscore {
 	display: none;
 }
 
