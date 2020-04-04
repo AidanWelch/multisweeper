@@ -2,6 +2,7 @@ const WebSocket = require('ws');
 const EventEmitter = require('events');
 class UpdateEmitter extends EventEmitter {}
 const updateEmitter = new UpdateEmitter();
+updateEmitter.setMaxListeners(999);
 var game = require('./gamehandler.js');
 class Player {
     constructor( id, name ) {    
@@ -16,12 +17,6 @@ var players = [];
 var map = game.MapGen();
 
 function CreatePlayer(name){
-    for(let i = 0; i < players.length; i++ ){
-        if( players[i] == null ){
-            players[i] = new Player(i, name);
-            return i;
-        }
-    }
     players.push(new Player(players.length, name));
     return players.length-1;
 }
@@ -79,7 +74,7 @@ wss.on('connection', function connection(ws) {
 
     ws.on('close', function closing(e) {
         map = game.DeletePlayer(map, id);
-        players[id] = null;
+        players.splice(id, 1);
         id = null;
         updateEmitter.removeListener('update', updateListener, true);
         updateEmitter.emit('update');

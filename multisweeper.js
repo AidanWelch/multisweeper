@@ -175,7 +175,6 @@ function DrawScores (scores){
         max = 10;
         scores.splice(9, 0, scores.splice(scores[GetPlayerScoreIndex(scores)], 1)); //this is definetly the simplest way to put the player that the end of the scoreboard
     }
-    scores = scores.slice(0, max);
 
     function DrawRow (score, place) {
         ctx.lineWidth = 5;
@@ -194,7 +193,7 @@ function DrawScores (scores){
         ctx.fillText(score.score, 0.76*canvas.width, Math.round(canvas.height*0.05*place) + Math.round(0.05*canvas.height) - 3);
         ctx.lineWidth = 1;
     }
-    for(let i = 0; i < scores.length; i++){
+    for(let i = 0; i < max; i++){
         DrawRow(scores[i], i+1);
     }
 }
