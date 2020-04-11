@@ -39,14 +39,12 @@ wss.on('connection', function connection(ws) {
             console.log(`Played ${id} created`);
             updateEmitter.emit('update');
         }
+
         if(id != null){
             if(req.operation == 'click' && (map[req.data.x][req.data.y].claimant_id == null || map[req.data.x][req.data.y].claimant_id == id)){
                 if(map[req.data.x][req.data.y].count == 'bomb'){
-                    map = game.DeletePlayer(map, id);
                     ws.send('loss');
-                    players[id] = null;
-                    id = null;
-                    updateEmitter.emit('update');
+                    KillPlayer();
                 } else {
                     if(map[req.data.x][req.data.y].count == 0){
                         map[req.data.x][req.data.y].claimant_id = id;
@@ -61,6 +59,13 @@ wss.on('connection', function connection(ws) {
             ws.send('error');
         }
     });
+
+    function KillPlayer(){
+        map = game.DeletePlayer(map, id);
+        players.splice(id, 1);
+        id = null;
+        updateEmitter.emit('update');
+    }
     
     var updateListener = function(event) {
         let res = {
@@ -72,13 +77,7 @@ wss.on('connection', function connection(ws) {
         ws.send(JSON.stringify(res));
     }
 
-    ws.on('close', function closing(e) {
-        map = game.DeletePlayer(map, id);
-        players.splice(id, 1);
-        id = null;
-        updateEmitter.removeListener('update', updateListener, true);
-        updateEmitter.emit('update');
-    });
+    ws.on('close', e => {KillPlayer(); updateEmitter.removeListener('update', updateListener, true)});
 
     updateEmitter.on('update', updateListener, true);
     
