@@ -337,8 +337,8 @@ canvas.addEventListener('click', function(event) {
 window.addEventListener('keydown', (event) => {
     if(id != null){
         let step = Math.log(10*(1/tileSizeMultiplier));
-        event.preventDefault();
         if(event.key == 'Tab'){
+            event.preventDefault();
             showScoreboard = true;
             DrawAll();
         } else if (event.key == 'w' || event.key == "ArrowUp") {
@@ -373,8 +373,8 @@ window.addEventListener("wheel", event => {
 });
 
 window.addEventListener('keyup', (event) => {
-    event.preventDefault();
     if(event.key == 'Tab'){
+        event.preventDefault();
         showScoreboard = false;
         DrawAll();
     }
