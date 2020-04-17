@@ -17,8 +17,16 @@ var players = [];
 var map = game.MapGen();
 
 function CreatePlayer(name){
-    players.push(new Player(players.length, name));
-    return players.length-1;
+    let playersid = 0;
+
+    for(playersid = 0; playersid < 1000; playersid++){
+        if(players.findIndex((player) => player.id === playersid) === -1){
+            break;
+        }
+    }
+
+    players.push(new Player(playersid, name));
+    return playersid;
 }
 
 

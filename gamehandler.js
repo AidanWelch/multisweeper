@@ -56,12 +56,12 @@ function DeletePlayer( map, id ) {
                 if(false){//Math.random() < BOMBS_PER_TILE){
                     map[x][y].count = 'bomb';
                 }  else  {
-                    map[x][y].count = null;
+                    map[x][y].count = null;//  This can likely be deleted
                 }
             }
         }
     }
-    map = UpdateCount(map);
+    map = UpdateCount(map);  //along with this
     return map;
 }
 

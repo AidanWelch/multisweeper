@@ -173,7 +173,7 @@ function DrawScores (scores){
         max = scores.length;
     } else {
         max = 10;
-        scores.splice(9, 0, scores.splice(scores[GetPlayerScoreIndex(scores)], 1));
+        scores.splice(9, 0, scores.splice(scores[GetScoresIndex(scores, id)], 1));
     }
 
     function DrawRow (score, place) {
@@ -210,8 +210,9 @@ function GetScores (){
     for(let x = 0; x < DIMENSIONS; x++){
         for(let y = 0; y < DIMENSIONS; y++){
             if(map[x][y].claimant_id != null){
-                if(scores[map[x][y].claimant_id] != null){
-                    scores[map[x][y].claimant_id].score++;
+                let targetIndex = GetScoresIndex(scores, map[x][y].claimant_id);
+                if(targetIndex != null){
+                    scores[targetIndex].score++;
                 }
             }
         }
@@ -230,8 +231,8 @@ function GetScores (){
     return scores;
 }
 
-function GetPlayerScoreIndex (scores){
-    return scores.findIndex((score) => score.id === id);
+function GetScoresIndex (scores, targetid){
+    return scores.findIndex((score) => score.id === targetid);
 }
 
 function CenterOnSpawn (map) {
@@ -261,7 +262,7 @@ socket.onmessage = function(recieved) {
         GetScores();
         DrawAll();
     } else if (recieved.data == 'loss') {
-        lastScore = players[GetPlayerScoreIndex(players)].score;
+        lastScore = players[GetScoresIndex(players, id)].score;
         id = null;
         flaggedTiles = [];
         if(Game != null){
