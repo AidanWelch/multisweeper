@@ -201,7 +201,7 @@ function DrawScores (scores){
 }
 
 function GetScores (){
-    let scores = players;
+    let scores = players.concat();
     for(let i = 0; i < scores.length; i++){
         if(scores[i] != null){
             scores[i].score = 0;
