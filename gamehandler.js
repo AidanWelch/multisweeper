@@ -1,5 +1,5 @@
 const DIMENSIONS = 100;
-const BOMBS_PER_TILE = 0.175;
+const BOMBS_PER_TILE = 0.2;
 class Tile {
     constructor( x, y ) {
         this.x = x;
