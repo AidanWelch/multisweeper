@@ -49,7 +49,12 @@ wss.on('connection', function connection(ws) {
         }
 
         if(id != null){
-            if(req.operation == 'click' && map[req.data.x][req.data.y].claimant_id == (null || id) && (req.data.x && req.data.y) < game.DIMENSIONS ){
+            if(
+                req.operation === 'click' && 
+                (req.data.x < game.DIMENSIONS && req.data.y < game.DIMENSIONS) &&
+                (req.data.x >= 0 && req.data.y >= 0) && 
+                (map[req.data.x][req.data.y].claimant_id === null || map[req.data.x][req.data.y].claimant_id === id)
+            ){
                 if(map[req.data.x][req.data.y].count == 'bomb'){
                     ws.send('loss');
                     KillPlayer();
