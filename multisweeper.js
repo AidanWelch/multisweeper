@@ -2,6 +2,7 @@ const canvas = document.querySelector("canvas");
 const scoreboard = document.querySelector("table");
 const loading = document.getElementsByClassName("loading");
 const menubox = document.getElementById("menubox");
+const reversezoom = document.getElementById("reversezoom");
 
 const ctx = canvas.getContext("2d");
 const DIMENSIONS = 100;
@@ -363,14 +364,18 @@ window.addEventListener('keydown', (event) => {
 }, false);
 
 window.addEventListener("wheel", event => {
+    zoomScale = 0.1
+    if(reversezoom.checked){
+        zoomScale = -zoomScale;
+    }
     if(id != null){
         if(event.deltaY > 0 && tileSizeMultiplier < 10){
             let tile = GetSelectedTile(event);
-            tileSizeMultiplier += 0.1;
+            tileSizeMultiplier -= zoomScale;
             ZoomWithAnchor(tile[0], tile[1], event);
-        } else if (event.deltaY < 0 && tileSizeMultiplier > 0.1) {
+        } else if (event.deltaY < 0 && tileSizeMultiplier > zoomScale) {
             let tile = GetSelectedTile(event);
-            tileSizeMultiplier -= 0.1;
+            tileSizeMultiplier += zoomScale;
             ZoomWithAnchor(tile[0], tile[1], event);
         }
         DrawAll();
