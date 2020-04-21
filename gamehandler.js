@@ -136,5 +136,6 @@ module.exports = {
     ClaimNeighbors,
     GetPlayersMap,
     SpawnPlayer,
-    TileCompare
+    TileCompare,
+    DIMENSIONS
 };
