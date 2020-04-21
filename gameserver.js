@@ -70,7 +70,7 @@ wss.on('connection', function connection(ws) {
 
     function KillPlayer(){
         map = game.DeletePlayer(map, id);
-        players.splice(id, 1);
+        players.splice(players.findIndex((player) => player.id === id), 1);
         id = null;
         updateEmitter.emit('update');
     }

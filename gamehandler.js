@@ -1,7 +1,7 @@
 const DIMENSIONS = 100;
 const BOMBS_PER_TILE = 0.175;
 class Tile {
-    constructor( x, y ) {    
+    constructor( x, y ) {
         this.x = x;
         this.y = y;
         this.claimant_id = null;

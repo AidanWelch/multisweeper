@@ -168,34 +168,38 @@ function ClearMap(){
 }
 
 function DrawScores (scores){
-    let max = 0;
-    if(scores.length <= 10){
+    let max;
+    if(scores.length < 10){
         max = scores.length;
-    } else {
-        max = 10;
-        scores.splice(9, 0, scores.splice(scores[GetScoresIndex(scores, id)], 1));
     }
 
-    function DrawRow (score, place) {
+    function DrawRow (score, place, isPlayer) {
+        let drawPlace;
+        if(!isPlayer){
+            drawPlace = place + 1;
+        } else {
+            drawPlace = 1;
+        }
         ctx.lineWidth = 5;
         ctx.globalAlpha = 0.5;
         ctx.fillStyle = GetColor(score.id);
-        ctx.fillRect(0.1*canvas.width, 0.05*place*canvas.height, canvas.width*0.8, canvas.height*0.05);
+        ctx.fillRect(0.1*canvas.width, 0.05*drawPlace*canvas.height, canvas.width*0.8, canvas.height*0.05);
         ctx.globalAlpha = 1;
         ctx.fillStyle = colors.walls;
         ctx.strokeStyle = colors.walls;
         ctx.font = `${Math.floor(canvas.height*0.05)}px Verdana`;
-        ctx.strokeRect(0.1*canvas.width, 0.05*place*canvas.height, canvas.width*0.1, canvas.height*0.05);
-        ctx.fillText(place, 0.11*canvas.width, Math.round(canvas.height*0.05*place) + Math.round(0.05*canvas.height) - 3);
-        ctx.strokeRect(0.2*canvas.width, 0.05*place*canvas.height, canvas.width*0.55, canvas.height*0.05);
-        ctx.fillText(score.name, 0.21*canvas.width, Math.round(canvas.height*0.05*place) + Math.round(0.05*canvas.height) - 3);
-        ctx.strokeRect(0.75*canvas.width, 0.05*place*canvas.height, 0.15*canvas.width, canvas.height*0.05);
-        ctx.fillText(score.score, 0.76*canvas.width, Math.round(canvas.height*0.05*place) + Math.round(0.05*canvas.height) - 3);
+        ctx.strokeRect(0.1*canvas.width, 0.05*drawPlace*canvas.height, canvas.width*0.1, canvas.height*0.05);
+        ctx.fillText(place, 0.11*canvas.width, Math.round(canvas.height*0.05*drawPlace) + Math.round(0.05*canvas.height) - 3);
+        ctx.strokeRect(0.2*canvas.width, 0.05*drawPlace*canvas.height, canvas.width*0.55, canvas.height*0.05);
+        ctx.fillText(score.name, 0.21*canvas.width, Math.round(canvas.height*0.05*drawPlace) + Math.round(0.05*canvas.height) - 3);
+        ctx.strokeRect(0.75*canvas.width, 0.05*drawPlace*canvas.height, 0.15*canvas.width, canvas.height*0.05);
+        ctx.fillText(score.score, 0.76*canvas.width, Math.round(canvas.height*0.05*drawPlace) + Math.round(0.05*canvas.height) - 3);
         ctx.lineWidth = 1;
     }
-    for(let i = 0; i < max; i++){
+    DrawRow(scores[GetScoresIndex(scores, id)], GetScoresIndex(scores, id)+1, true);
+    for(let i = 0; i < (max || 10); i++){
         if(scores[i]){
-            DrawRow(scores[i], i+1);
+            DrawRow(scores[i], i+1, false);
         }
     }
 }
