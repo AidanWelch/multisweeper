@@ -74,10 +74,10 @@ function ClaimNeighbors ( map, x, y, id ){
                 if((y+suby) >= 0 && (y+suby) < DIMENSIONS) {
                     if(map[x+subx][y+suby].claimant_id == null){
                         map[x+subx][y+suby].claimant_id = id;
+                        if(map[x+subx][y+suby].count === 0){
+                            map = ClaimNeighbors(map, x+subx, y+suby, id); 
+                        }
                     }
-                    //if(map[x+subx][y+suby].count == 0) {    /DEPRECATED\
-                        //map = ClaimNeighbors(map, x+subx, y+suby, id);    /DEPRECATED\
-                    //}    /DEPRECATED\
                 }
             }
         }
