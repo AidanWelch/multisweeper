@@ -280,6 +280,11 @@ socket.onmessage = function(recieved) {
     }
 }
 
+function SignUp(){
+    socket.send(JSON.stringify(new Request('create', {name: document.getElementById("nickname").value})));
+    menubox.style.display = 'none';
+}
+
 var Game = null;
 socket.onopen = function(e) {
     for(let i = 0; i < loading.length; i++){
@@ -295,8 +300,7 @@ socket.onopen = function(e) {
         ClearMap();
         DrawAll();
         document.getElementById("startbutton").onclick = () =>{
-            socket.send(JSON.stringify(new Request('create', {name: document.getElementById("nickname").value})));
-            menubox.style.display = 'none';
+            SignUp();
         };
     }
     Game();
@@ -328,6 +332,7 @@ canvas.addEventListener('contextmenu', function(event) {
     }
 });
 
+
 canvas.addEventListener('click', function(event) {
     if(id != null){
         event.preventDefault();
@@ -341,7 +346,7 @@ canvas.addEventListener('click', function(event) {
 });
 
 window.addEventListener('keydown', (event) => {
-    if(id != null){
+    if(id !== null){
         let step = Math.log(10*(1/tileSizeMultiplier));
         if(event.key == 'Tab'){
             event.preventDefault();
@@ -359,6 +364,10 @@ window.addEventListener('keydown', (event) => {
         } else if (event.key == 'd' || event.key == "ArrowRight") {
             view_x += step;
             DrawAll();
+        }
+    } else if (menubox.style.display !== 'none'){
+        if (event.key == "Enter") {
+            SignUp();
         }
     }
 }, false);
