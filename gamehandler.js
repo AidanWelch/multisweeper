@@ -53,15 +53,17 @@ function DeletePlayer( map, id ) {
         for(let y = 0; y < DIMENSIONS; y++){
             if(map[x][y].claimant_id == id){
                 map[x][y].claimant_id = null;
-                if(false){//Math.random() < BOMBS_PER_TILE){
+                /* Removed until decision on map regen is made
+                if(Math.random() < BOMBS_PER_TILE){
                     map[x][y].count = 'bomb';
                 }  else  {
-                    map[x][y].count = null;//  This can likely be deleted
+                    map[x][y].count = null;
                 }
+                */
             }
         }
     }
-    map = UpdateCount(map);  //along with this
+    //map = UpdateCount(map);  //along with this
     return map;
 }
 
