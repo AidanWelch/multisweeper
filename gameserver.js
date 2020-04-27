@@ -12,7 +12,7 @@ class Player {
     }
 }
 
-const wss = new WebSocket.Server({ port: process.env.PORT || 81});
+const wss = new WebSocket.Server({perMessageDeflate: true, port: process.env.PORT || 81});
 var players = [];
 var map = game.MapGen();
 
