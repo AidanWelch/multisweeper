@@ -1,6 +1,6 @@
 const WebSocket = require('ws'); 
 const EventEmitter = require('events');
-class UpdateEmitter extends EventEmitter {}
+class UpdateEmitter extends EventEmitter {};
 const updateEmitter = new UpdateEmitter();
 updateEmitter.setMaxListeners(999);
 var game = require('./gamehandler.js');
