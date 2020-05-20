@@ -1,4 +1,5 @@
 const WebSocket = require('ws'); 
+const JOSC = require('joscompress');
 const EventEmitter = require('events');
 class UpdateEmitter extends EventEmitter {};
 const updateEmitter = new UpdateEmitter();
@@ -11,6 +12,8 @@ class Player {
         this.score = 0;
     }
 }
+
+var schema = new JOSC({});
 
 const wss = new WebSocket.Server({perMessageDeflate: true, port: process.env.PORT || 81});
 var players = [];
@@ -87,7 +90,7 @@ wss.on('connection', function connection(ws) {
             players: players
         }
         res.map = game.GetPlayersMap(map, id);
-        ws.send(JSON.stringify(res));
+        ws.send(schema.encode(res));
     }
 
     ws.on('close', e => {KillPlayer(); updateEmitter.removeListener('update', updateListener, true)});

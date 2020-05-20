@@ -26,6 +26,23 @@ class Tile {
     }
 }
 
+var responseSchema = {
+    id: 'int',
+    map: [{
+        x: 'int',
+        y: 'int',
+        claimant_id: 'int',
+        count: 'int'
+    }],
+    players: [{
+        id: 'int',
+        name: 'string',
+        score: 'int'
+    }]
+}
+
+const schema = new JOSC.Schema(responseSchema);
+
 var flaggedTiles = [];
 var map = [];
 var id = null;
@@ -256,7 +273,7 @@ function CenterOnSpawn (map) {
 socket.onmessage = function(recieved) {
     if (recieved.data != 'error' && recieved.data != 'loss'){
         ClearMap();
-        let res = JSON.parse(recieved.data);
+        let res = schema.decode(recieved.data);
         if(id == null){
             id = res.id;
             CenterOnSpawn(res.map);

@@ -183,19 +183,20 @@ export class Schema {
                 return decodeArray((wrapped) ? string.slice(1,-1) : string, schm);
             } else if (typeof schm === 'object' && schm !== null) {
                 return decodeObject((wrapped) ? string.slice(1,-1) : string, schm);
+            } else if (schm === 'string'){
+                return string.slice(1,-1);
+            } else if(string === 'null' || string === 'undefined'){
+                return (string === 'null') ? null : undefined;
             } else if (schm === 'int') {
                 return parseInt(string, 10);
             } else if (schm === 'float') {
                 return parseFloat(string);
-            } else if (schm === 'string'){
-                return string.slice(1,-1);
             } else if (schm === 'bool'){
                 return (string === '1');
             } else {
                 return string;
             }
         }
-
         return schemaIdentify(this.schema, message, false);
     }
 }
