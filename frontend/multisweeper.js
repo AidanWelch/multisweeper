@@ -1,3 +1,5 @@
+import * as JOSC from './joscompress.js';
+
 const canvas = document.querySelector("canvas");
 const scoreboard = document.querySelector("table");
 const loading = document.getElementsByClassName("loading");

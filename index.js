@@ -8,24 +8,28 @@ app.use(bodyParser.json());
 
 //CSS
 app.get('/common.css', (req, res) => {
-    res.sendFile(path.join(__dirname+'/common.css'));
+    res.sendFile(path.join(__dirname+'/frontend/common.css'));
 });
 //Favicon
 app.get('/favicon.ico', (req, res) => {
-    res.sendFile(path.join(__dirname+'/favicon.ico'));
+    res.sendFile(path.join(__dirname+'/frontend/favicon.ico'));
 });
 ////
 
 app.get('/multisweeper.js', (req, res) => {
-    res.sendFile(path.join(__dirname+'/multisweeper.js'));
+    res.sendFile(path.join(__dirname+'/frontend/multisweeper.js'));
+});
+
+app.get('/joscompress.js', (req, res) => {
+    res.sendFile(path.join(__dirname+'/frontend/joscompress.js'));
 });
 
 app.get('/help', (req, res) => {
-    res.sendFile(path.join(__dirname+'/help.html'));
+    res.sendFile(path.join(__dirname+'/frontend/help.html'));
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname+'/index.html'));
+    res.sendFile(path.join(__dirname+'/frontend/index.html'));
 });
 
 app.listen(process.env.PORT || 80);
