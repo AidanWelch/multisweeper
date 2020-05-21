@@ -1,2 +1,2 @@
 # multisweeper
-Webbased multisweeper.io game
+Webbased multisweeper.xyz game
