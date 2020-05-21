@@ -1,7 +1,6 @@
 import * as JOSC from './joscompress.js';
 
 const canvas = document.querySelector("canvas");
-const scoreboard = document.querySelector("table");
 const loading = document.getElementsByClassName("loading");
 const menubox = document.getElementById("menubox");
 const reversezoom = document.getElementById("reversezoom");
