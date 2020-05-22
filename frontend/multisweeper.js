@@ -1,4 +1,4 @@
-import * as JOSC from './joscompress.js';
+const JOSC = joscompress;
 
 const canvas = document.querySelector("canvas");
 const loading = document.getElementsByClassName("loading");
@@ -40,7 +40,7 @@ var responseSchema = {
     }]
 }
 
-const schema = new JOSC.Schema(responseSchema);
+const schema = new JOSC(responseSchema);
 
 var flaggedTiles = [];
 var map = [];
