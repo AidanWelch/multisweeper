@@ -391,7 +391,7 @@ window.addEventListener('keydown', (event) => {
 }, false);
 
 window.addEventListener("wheel", event => {
-    zoomScale = 0.1
+    var zoomScale = 0.1
     if(reversezoom.checked){
         zoomScale = -zoomScale;
     }
