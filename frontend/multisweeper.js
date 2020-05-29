@@ -371,17 +371,25 @@ window.addEventListener('keydown', (event) => {
             showScoreboard = true;
             DrawAll();
         } else if (event.key == 'w' || event.key == "ArrowUp") {
-            view_y -= step;
-            DrawAll();
+            if(view_y >= step){
+                view_y -= step;
+                DrawAll();
+            }
         } else if (event.key == 's' || event.key == "ArrowDown") {
-            view_y += step;
-            DrawAll();
+            if(view_y + step <= DIMENSIONS){
+                view_y += step;
+                DrawAll();
+            }
         } else if (event.key == 'a' || event.key == "ArrowLeft") {
-            view_x -= step;
-            DrawAll();
+            if(view_x >= step){
+                view_x -= step;
+                DrawAll();
+            }
         } else if (event.key == 'd' || event.key == "ArrowRight") {
-            view_x += step;
-            DrawAll();
+            if(view_x + step <= DIMENSIONS){
+                view_x += step;
+                DrawAll();
+            }
         }
     } else if (menubox.style.display !== 'none'){
         if (event.key == "Enter") {
@@ -391,20 +399,13 @@ window.addEventListener('keydown', (event) => {
 }, false);
 
 window.addEventListener("wheel", event => {
-    var zoomScale = 0.1
-    if(reversezoom.checked){
-        zoomScale = -zoomScale;
-    }
+    var zoomScale = reversezoom.checked ? -0.1 : 0.1;
     if(id != null){
-        if(event.deltaY > 0 && tileSizeMultiplier < 10){
-            let tile = GetSelectedTile(event);
-            tileSizeMultiplier -= zoomScale;
-            ZoomWithAnchor(tile[0], tile[1], event);
-        } else if (event.deltaY < 0 && tileSizeMultiplier > zoomScale) {
-            let tile = GetSelectedTile(event);
-            tileSizeMultiplier += zoomScale;
-            ZoomWithAnchor(tile[0], tile[1], event);
-        }
+        let tile = GetSelectedTile(event);
+        tileSizeMultiplier = tileSizeMultiplier + ((event.deltaY < 0) ? zoomScale :  -zoomScale);
+        tileSizeMultiplier = (tileSizeMultiplier > 2) ? 2 : tileSizeMultiplier;
+        tileSizeMultiplier = (tileSizeMultiplier < Math.abs(zoomScale)) ? Math.abs(zoomScale) : tileSizeMultiplier;
+        ZoomWithAnchor(tile[0], tile[1], event);
         DrawAll();
     }
 });
