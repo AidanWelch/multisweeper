@@ -110,7 +110,7 @@ function GetTileSize(){
     }
 }
 
-function ZoomWithAnchor( oldx, oldy, event ) {
+function MoveWithAnchor( oldx, oldy, event ) {
     let [curx, cury] = GetSelectedTile(event);
     view_x += oldx-curx;
     view_y += oldy-cury;
@@ -351,15 +351,34 @@ canvas.addEventListener('contextmenu', function(event) {
 });
 
 
-canvas.addEventListener('click', function(event) {
-    if(id != null){
+canvas.addEventListener('mousedown', function(event) {
+    if(id != null && (event.button === 0 || event.button == 1)){
         event.preventDefault();
-        let tile = GetSelectedTile(event);
-        if(flaggedTiles.findIndex((flagged) => {
-            return (flagged[0] == tile[0]) && (flagged[1] == tile[1]);
-        }) == -1){
-            socket.send(JSON.stringify(new Request('click', {x: tile[0], y: tile[1]})));
-        }
+        var pressed = new Date().getTime();
+        var tile = GetSelectedTile(event);
+        var released = false;
+        var moved = false
+
+        canvas.addEventListener('mousemove', function(event) {
+            event.preventDefault();
+            if(!released && new Date().getTime() - pressed > 100){
+                moved = true;
+                MoveWithAnchor(tile[0], tile[1], event);
+                DrawAll();
+            }
+        });
+
+        canvas.addEventListener('mouseup', function(event) {
+            event.preventDefault();
+            released = true;
+            if((new Date().getTime() - pressed < 200 && !moved) && event.button === 0){
+                if(flaggedTiles.findIndex((flagged) => {
+                    return (flagged[0] == tile[0]) && (flagged[1] == tile[1]);
+                }) == -1){
+                    socket.send(JSON.stringify(new Request('click', {x: tile[0], y: tile[1]})));
+                }
+            }
+        });
     }
 });
 
@@ -405,7 +424,7 @@ window.addEventListener("wheel", event => {
         tileSizeMultiplier = tileSizeMultiplier + ((event.deltaY < 0) ? zoomScale :  -zoomScale);
         tileSizeMultiplier = (tileSizeMultiplier > 2) ? 2 : tileSizeMultiplier;
         tileSizeMultiplier = (tileSizeMultiplier < Math.abs(zoomScale)) ? Math.abs(zoomScale) : tileSizeMultiplier;
-        ZoomWithAnchor(tile[0], tile[1], event);
+        MoveWithAnchor(tile[0], tile[1], event);
         DrawAll();
     }
 });
