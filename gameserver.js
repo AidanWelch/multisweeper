@@ -15,7 +15,7 @@ class Player {
 
 var schema = new JOSC({});
 
-const wss = new WebSocket.Server({perMessageDeflate: true, port: process.env.PORT || 81});
+const wss = new WebSocket.Server({clientTracking: true, perMessageDeflate: true, port: process.env.PORT || 81});
 var players = [];
 var map = game.MapGen();
 
@@ -23,7 +23,7 @@ function CreatePlayer(name){
     let playersid = 0;
 
     for(playersid = 0; playersid < 1000; playersid++){
-        if(players.findIndex((player) => player.id === playersid) === -1){
+        if(players.findIndex((player) => player !== null && player.id === playersid) === -1){
             break;
         }
     }
@@ -35,61 +35,75 @@ function CreatePlayer(name){
 
 
 wss.on('connection', function connection(ws) {
-    var id = null;
+    ws.id = null;
 
     ws.on('message', function incoming(message) {
         let req = JSON.parse(message);
         if(req.operation == 'create'){
-            if(id != null){
-                map = game.DeletePlayer(map, id);
-                players[id] = null;
-                id = null;
+            if(ws.id != null){
+                map = game.DeletePlayer(map, ws.id);
+                players[ws.id] = null;
+                ws.id = null;
             }
-            id = CreatePlayer(req.data.name);
-            map = game.SpawnPlayer(map, id);
-            console.log(`Played ${id} created`);
-            updateEmitter.emit('update');
+            ws.id = CreatePlayer(req.data.name);
+            map = game.SpawnPlayer(map, ws.id);
+            console.log(`Played ${ws.id} created`);
+            let win;
+            [players, win] = game.UpdateScores(map, players);
+            (win) ? Win() : updateEmitter.emit('update');
         }
 
-        if(id != null){
+        if(ws.id != null){
             if(
                 req.operation === 'click' && 
                 (req.data.x < game.DIMENSIONS && req.data.y < game.DIMENSIONS) &&
                 (req.data.x >= 0 && req.data.y >= 0) && 
-                (map[req.data.x][req.data.y].claimant_id === null || map[req.data.x][req.data.y].claimant_id === id)
+                (map[req.data.x][req.data.y].claimant_id === null || map[req.data.x][req.data.y].claimant_id === ws.id)
             ){
                 if(map[req.data.x][req.data.y].count == 'bomb'){
                     ws.send('loss');
                     KillPlayer();
                 } else {
                     if(map[req.data.x][req.data.y].count == 0){
-                        map[req.data.x][req.data.y].claimant_id = id;
-                        map = game.ClaimNeighbors(map, req.data.x, req.data.y, id);
+                        map[req.data.x][req.data.y].claimant_id = ws.id;
+                        map = game.ClaimNeighbors(map, req.data.x, req.data.y, ws.id);
                     } else {
-                        map[req.data.x][req.data.y].claimant_id = id;
+                        map[req.data.x][req.data.y].claimant_id = ws.id;
                     }
-                    updateEmitter.emit('update');
                 }
+                let win;
+                [players, win] = game.UpdateScores(map, players);
+                (win) ? Win() : updateEmitter.emit('update');
             }
         } else {
             ws.send('error');
         }
     });
 
+    function Win(){
+        for (let client of wss.clients){
+            client.send('win');
+            client.id = null;
+        }
+        players = [];
+        map = game.MapGen();
+        updateEmitter.emit('update');
+    }
+
     function KillPlayer(){
-        map = game.DeletePlayer(map, id);
-        players.splice(players.findIndex((player) => player.id === id), 1);
-        id = null;
+        map = game.DeletePlayer(map, ws.id);
+        players.splice(players.findIndex((player) => player.id === ws.id), 1);
+        ws.id = null;
         updateEmitter.emit('update');
     }
     
     var updateListener = function(event) {
         let res = {
-            id: id,
+            id: ws.id,
             map,
             players: players
         }
-        res.map = game.GetPlayersMap(map, id);
+        res.map = game.GetPlayersMap(map, ws.id);
         ws.send(schema.encode(res));
     }
 

@@ -234,7 +234,7 @@ function GetScores (){
         for(let y = 0; y < DIMENSIONS; y++){
             if(map[x][y].claimant_id != null){
                 let targetIndex = GetScoresIndex(scores, map[x][y].claimant_id);
-                if(targetIndex != null){
+                if(targetIndex !== -1){
                     scores[targetIndex].score++;
                 }
             }

@@ -49,7 +49,25 @@ function UpdateCount( map ) {
 }
 
 function UpdateScores ( map, players ){
-
+    let win = true;
+    for(let i = 0; i < players.length; i++){
+        if(players[i] !== null){
+            players[i].score = 0;
+        }
+    }
+    for(let x = 0; x < DIMENSIONS; x++){
+        for(let y = 0; y < DIMENSIONS; y++){
+            if(map[x][y].claimant_id !== null){
+                let targetIndex = players.findIndex((player) => player.id === map[x][y].claimant_id);
+                if(targetIndex !== -1){
+                    players[targetIndex].score++;
+                }
+            } else if (map[x][y].count !== 'bomb'){
+                win = false;
+            }
+        }
+    }
+    return [players, win];
 }
 
 function DeletePlayer( map, id ) {
