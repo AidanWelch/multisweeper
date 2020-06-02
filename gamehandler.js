@@ -48,6 +48,10 @@ function UpdateCount( map ) {
     return map;
 }
 
+function UpdateScores ( map, players ){
+
+}
+
 function DeletePlayer( map, id ) {
     for(let x = 0; x < DIMENSIONS; x++){
         for(let y = 0; y < DIMENSIONS; y++){
@@ -139,5 +143,6 @@ module.exports = {
     GetPlayersMap,
     SpawnPlayer,
     TileCompare,
+    UpdateScores,
     DIMENSIONS
 };
