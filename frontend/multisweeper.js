@@ -165,7 +165,7 @@ function DrawAll() {
         }
     }
     if(showScoreboard){
-        DrawScores(GetScores());
+        DrawScores(SortPlayers());
     }
 }
 
@@ -215,7 +215,7 @@ function DrawScores (scores){
         ctx.fillText(score.score, 0.76*canvas.width, Math.round(canvas.height*0.05*drawPlace) + Math.round(0.05*canvas.height) - 3);
         ctx.lineWidth = 1;
     }
-    DrawRow(scores[GetScoresIndex(scores, id)], GetScoresIndex(scores, id)+1, true);
+    DrawRow(scores[GetPlayerIndex(scores, id)], GetPlayerIndex(scores, id)+1, true);
     for(let i = 0; i < (max || 10); i++){
         if(scores[i]){
             DrawRow(scores[i], i+1, false);
@@ -223,24 +223,8 @@ function DrawScores (scores){
     }
 }
 
-function GetScores (){
-    let scores = players.concat();
-    for(let i = 0; i < scores.length; i++){
-        if(scores[i] != null){
-            scores[i].score = 0;
-        }
-    }
-    for(let x = 0; x < DIMENSIONS; x++){
-        for(let y = 0; y < DIMENSIONS; y++){
-            if(map[x][y].claimant_id != null){
-                let targetIndex = GetScoresIndex(scores, map[x][y].claimant_id);
-                if(targetIndex !== -1){
-                    scores[targetIndex].score++;
-                }
-            }
-        }
-    }
-    scores.sort(function(a,b){
+function SortPlayers (){
+    players.sort(function(a,b){
         if(a != null && b != null){
             return b.score - a.score;
         } else {
@@ -251,11 +235,11 @@ function GetScores (){
             }
         }
     });
-    return scores;
+    return players;
 }
 
-function GetScoresIndex (scores, targetid){
-    return scores.findIndex((score) => score.id === targetid);
+function GetPlayerIndex (players, targetid){
+    return players.findIndex((player) => player.id === targetid);
 }
 
 function CenterOnSpawn (map) {
@@ -282,10 +266,10 @@ socket.onmessage = function(recieved) {
             map[res.map[i].x][res.map[i].y] = res.map[i];
         }
         players = res.players;
-        GetScores();
+        SortPlayers();
         DrawAll();
     } else if (recieved.data == 'loss') {
-        lastScore = players[GetScoresIndex(players, id)].score;
+        lastScore = players[GetPlayerIndex(players, id)].score;
         id = null;
         flaggedTiles = [];
         if(Game != null){
