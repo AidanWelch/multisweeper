@@ -4,6 +4,7 @@ const canvas = document.querySelector("canvas");
 const loading = document.getElementsByClassName("loading");
 const menubox = document.getElementById("menubox");
 const reversezoom = document.getElementById("reversezoom");
+const endtext = document.getElementById("endtext");
 
 const ctx = canvas.getContext("2d");
 const DIMENSIONS = 100;
@@ -47,8 +48,6 @@ var map = [];
 var id = null;
 var players = null;
 
-var lastScore = null;
-
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -88,7 +87,7 @@ function GetColor(id){
     if(id.length > 0){
         s = 10 * id.pop();
         if(id.length > 0){
-            v = (5 * (id.pop() + 1)) + 50;
+            l = (5 * (id.pop() + 1)) + 50;
         }
     }
     return `hsl(${h}, ${s}%, ${l}%)`;
@@ -254,7 +253,27 @@ function CenterOnSpawn (map) {
 }
 
 socket.onmessage = function(recieved) {
-    if (recieved.data != 'error' && recieved.data != 'loss'){
+     if (recieved.data === 'loss') {
+        let lastScore = players[GetPlayerIndex(players, id)].score;
+        id = null;
+        flaggedTiles = [];
+        if(Game !== null){
+            Game(lastScore);
+        } else {
+            alert("Somehow you lost before starting the game, please refresh the page.");
+        }
+    } else if (recieved.data === 'win') {
+        let lastScore = players[GetPlayerIndex(players, id)].score;
+        let winner = players[0];
+        winner.isPlayer = winner.id === id; 
+        id = null;
+        flaggedTiles = [];
+        if(Game !== null){
+            Game(lastScore, winner);
+        } else {
+            alert("Some strange error occured, please refresh the page.");
+        }
+    } else if (recieved.data != 'error'){
         ClearMap();
         let res = schema.decode(recieved.data);
         if(id == null){
@@ -268,15 +287,6 @@ socket.onmessage = function(recieved) {
         players = res.players;
         SortPlayers();
         DrawAll();
-    } else if (recieved.data == 'loss') {
-        lastScore = players[GetPlayerIndex(players, id)].score;
-        id = null;
-        flaggedTiles = [];
-        if(Game != null){
-            Game();
-        } else {
-            alert("Somehow you lost before starting the game, please refresh the page.");
-        }
     } else {
         alert("Somehow you managed to avoid creating an account, please refresh the page.");
     }
@@ -292,12 +302,14 @@ socket.onopen = function(e) {
     for(let i = 0; i < loading.length; i++){
         loading[i].style.display = "none";
     }
-    Game = function () {
+    Game = function (lastScore = null, winner = null) {
         menubox.style.display = "block";
-        if(lastScore != null){
-            let lastScoreText = document.getElementById("lastscore");
-            lastScoreText.innerHTML = `You lost!  Your score was ${lastScore}`;
-            lastScoreText.style.display = "block";
+        if(winner !== null){
+            endtext.innerHTML = (winner.isPlayer) ? `You won!  Your score was ${lastScore}` : `"${winner.name}" won!  Your score was ${lastScore}`;
+            endtext.style.display = "block";
+        } else if (lastScore !== null){
+            endtext.innerHTML = `You lost!  Your score was ${lastScore}`;
+            endtext.style.display = "block";
         }
         ClearMap();
         DrawAll();
