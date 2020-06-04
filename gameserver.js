@@ -3,8 +3,12 @@ const JOSC = require('joscompress');
 const EventEmitter = require('events');
 class UpdateEmitter extends EventEmitter {};
 const updateEmitter = new UpdateEmitter();
-updateEmitter.setMaxListeners(999);
+
+const MAXPLAYERS = 1000;
+updateEmitter.setMaxListeners(MAXPLAYERS);
+
 var game = require('./gamehandler.js');
+
 class Player {
     constructor( id, name ) {    
         this.id = id;
@@ -22,7 +26,7 @@ var map = game.MapGen();
 function CreatePlayer(name){
     let playersid = 0;
 
-    for(playersid = 0; playersid < 1000; playersid++){
+    for(playersid = 0; playersid < MAXPLAYERS; playersid++){
         if(players.findIndex((player) => player !== null && player.id === playersid) === -1){
             break;
         }
