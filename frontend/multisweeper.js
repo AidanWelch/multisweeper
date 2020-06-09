@@ -241,8 +241,10 @@ function CenterOnSpawn (map) {
         }
     });
     tileSizeMultiplier = 1;
-    view_x = map[spawnpoint].x - (Math.ceil(canvas.width / (tileSizeMultiplier*50))/2);
-    view_y = map[spawnpoint].y - (Math.ceil(canvas.height / (tileSizeMultiplier*50))/2);
+    if(spawnpoint !== -1){
+        view_x = map[spawnpoint].x - (Math.ceil(canvas.width / (tileSizeMultiplier*50))/2);
+        view_y = map[spawnpoint].y - (Math.ceil(canvas.height / (tileSizeMultiplier*50))/2);
+    }
 }
 
 socket.onmessage = function(recieved) {

@@ -36,13 +36,41 @@ function CreatePlayer(name){
     return playersid;
 }
 
+function InputSanitize(message){
+    let req;
+    try {
+        req = JSON.parse(message);
+    } catch {
+        req = null;
+    }
+
+    if(!(
+        typeof req.operation !== 'undefined' &&
+        (
+            (
+                req.operation === 'create' && typeof req.data.name === 'string'
+            ) ||
+            (
+                req.operation === 'click' && 
+                (
+                    typeof req.data.x === 'number' &&
+                    typeof req.data.y === 'number'
+                )
+            )
+        )
+    )){
+        req.operation = 'fail';
+    }
+
+    return req;
+}
 
 
 wss.on('connection', function connection(ws) {
     ws.id = null;
 
     ws.on('message', function incoming(message) {
-        let req = JSON.parse(message);
+        let req = InputSanitize(message);
         if(req.operation == 'create'){
             if(ws.id != null){
                 map = game.DeletePlayer(map, ws.id);
