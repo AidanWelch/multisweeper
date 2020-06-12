@@ -4,6 +4,11 @@ var bodyParser = require('body-parser');
 var path = require('path');
 require('./gameserver');
 
+app.use(function (req, res, next) {
+    res.set('X-Clacks-Overhead', 'GNU Terry Pratchet');
+    next();
+});
+
 app.use(bodyParser.json());
 
 //CSS
