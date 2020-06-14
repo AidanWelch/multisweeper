@@ -70,6 +70,7 @@ class Request {
     constructor (operation, data){
         this.operation = operation;
         this.data = data;
+        lastResponseTime = new Date().getTime();
     }
 }
 
@@ -249,6 +250,7 @@ function CenterOnSpawn (map) {
 }
 
 socket.onmessage = function(recieved) {
+    lastResponseTime = new Date().getTime();
      if (recieved.data === 'loss') {
         let lastScore = players[GetPlayerIndex(players, id)].score;
         id = null;
@@ -269,7 +271,7 @@ socket.onmessage = function(recieved) {
         } else {
             alert("Some strange error occured, please refresh the page.");
         }
-    } else if (recieved.data != 'error'){
+    } else if (recieved.data !== 'error'){
         ClearMap();
         let res = schema.decode(recieved.data);
         if(id == null){
@@ -313,7 +315,19 @@ socket.onopen = function(e) {
             SignUp();
         };
     }
+    lastResponseTime = new Date().getTime();
+    KeepAlive();
     Game();
+}
+
+var lastResponseTime;
+async function KeepAlive(){
+    setInterval(() => {
+        if(new Date().getTime() > lastResponseTime + 20000){
+            socket.send('Staying alive');
+            lastResponseTime = new Date().getTime();
+        }
+    }, 10)
 }
 
 function GetSelectedTile(event){
