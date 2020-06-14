@@ -29,4 +29,8 @@ describe('Test of the WebSocket game server', () => {
         ws.send(JSON.stringify(new Request(false, {x: 2})));
         ws.send(JSON.stringify(new Request('click', {name: 2})));
     });
+
+    it('ends here', () => {
+        process.exit();
+    });
 });
