@@ -15,7 +15,8 @@
   },
   "scripts": {
     "test": "mocha",
-    "start": "node index.js"
+    "start": "node index.js",
+    "nginx": "nginx -c ./nginx.conf && node gameserver.js"
   },
   "repository": {
     "type": "git",

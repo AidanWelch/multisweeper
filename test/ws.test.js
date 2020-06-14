@@ -12,7 +12,7 @@ class Request {
 describe('Test of the WebSocket game server', () => {
     var ws;
     it('should connect', () => {
-        ws = new WebSocket(`ws://localhost/ws`);
+        ws = new WebSocket('ws://localhost:81');
     });
 
     it('should open', () => {
