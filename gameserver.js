@@ -41,7 +41,7 @@ function InputSanitize(message){
     try {
         req = JSON.parse(message);
     } catch {
-        req = null;
+        req = {};
     }
 
     if(!(

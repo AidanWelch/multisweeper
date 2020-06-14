@@ -8,7 +8,8 @@ const endtext = document.getElementById("endtext");
 
 const ctx = canvas.getContext("2d");
 const DIMENSIONS = 100;
-const socket = new WebSocket('ws' + ((window.location.href[4] == "s") ? window.location.href.slice(5, -1) : window.location.href.slice(4, -1)) + ':81');
+const PORT = 81
+const socket = new WebSocket('ws' + ((window.location.href[4] == "s") ? window.location.href.slice(5, -1) : window.location.href.slice(4, -1)) + `:${PORT}`);
 
 class Tile {
     constructor( x, y ) {    
