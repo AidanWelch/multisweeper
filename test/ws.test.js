@@ -30,7 +30,7 @@ describe('Test of the WebSocket game server', () => {
         ws.send(JSON.stringify(new Request('click', {name: 2})));
     });
 
-    it('ends here', () => {
+    after(() => {
         process.exit();
     });
 });
