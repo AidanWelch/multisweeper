@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var path = require('path');
-require('./gameserver');
+
 
 app.use(function (req, res, next) {
     res.set('X-Clacks-Overhead', 'GNU Terry Pratchet');
@@ -37,4 +37,4 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname+'/frontend/index.html'));
 });
 
-app.listen(process.env.PORT || 80);
+require('./gameserver')(app.listen(process.env.PORT || 80));

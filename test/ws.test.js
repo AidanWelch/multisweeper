@@ -1,6 +1,5 @@
 const assert = require('assert');
 const WebSocket = require('ws');
-const PORT = 81;
 require('../gameserver');
 
 class Request {
@@ -13,7 +12,7 @@ class Request {
 describe('Test of the WebSocket game server', () => {
     var ws;
     it('should connect', () => {
-        ws = new WebSocket(`ws://localhost:${PORT}`);
+        ws = new WebSocket(`ws://localhost/ws`);
     });
 
     it('should open', () => {
