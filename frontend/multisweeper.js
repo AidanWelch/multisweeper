@@ -8,7 +8,7 @@ const endtext = document.getElementById("endtext");
 
 const ctx = canvas.getContext("2d");
 const DIMENSIONS = 100;
-const socket = new WebSocket('ws://' + window.location.host);
+const socket = new WebSocket('wss://' + window.location.host + '/ws/');
 
 class Tile {
     constructor( x, y ) {    
