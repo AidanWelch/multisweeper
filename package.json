@@ -16,7 +16,8 @@
   "scripts": {
     "test": "mocha",
     "start": "node index.js",
-    "nginx": "nginx -c /home/aidan/Desktop/multisweeper/nginx.conf && node gameserver.js"
+    "nginx": "nginx -c /home/aidan/Desktop/multisweeper/nginx.conf && node gameserver.js",
+    "nginx-stop": "fuser -k 80/tcp && nginx -s stop"
   },
   "repository": {
     "type": "git",
