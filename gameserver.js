@@ -1,19 +1,17 @@
 const WebSocket = require('ws'); 
 const JOSC = require('joscompress');
-const EventEmitter = require('events');
-class UpdateEmitter extends EventEmitter {};
-const updateEmitter = new UpdateEmitter();
 
 const MAXPLAYERS = 1000;
-updateEmitter.setMaxListeners(MAXPLAYERS);
 
 var game = require('./gamehandler.js');
+const e = require('express');
 
 class Player {
-    constructor( id, name ) {    
+    constructor( id, name, ws ) {    
         this.id = id;
         this.name = name;
         this.score = 0;
+        this.ws = ws;
     }
 }
 
@@ -24,7 +22,7 @@ const wss = new WebSocket.Server({clientTracking: true, perMessageDeflate: true,
 var players = [];
 var map = game.MapGen();
 
-function CreatePlayer(name){
+function CreatePlayer(name, ws){
     let playersid = 0;
 
     for(playersid = 0; playersid < MAXPLAYERS; playersid++){
@@ -33,7 +31,7 @@ function CreatePlayer(name){
         }
     }
 
-    players.push(new Player(playersid, name));
+    players.push(new Player(playersid, name, ws));
     return playersid;
 }
 
@@ -69,22 +67,23 @@ function InputSanitize(message){
 
 wss.on('connection', function connection(ws) {
     ws.id = null;
+    ws.id.id = null;
 
     ws.on('message', function incoming(message) {
         if(message !== 'Staying alive'){
             let req = InputSanitize(message);
-            if(req.operation == 'create'){
-                if(ws.id != null){
+            if(req.operation === 'create'){
+                if(ws.id !== null){
                     map = game.DeletePlayer(map, ws.id);
                     players[ws.id] = null;
                     ws.id = null;
                 }
-                ws.id = CreatePlayer(req.data.name);
+                ws.id = CreatePlayer(req.data.name, ws);
                 map = game.SpawnPlayer(map, ws.id);
                 console.log(`Played ${ws.id} created`);
                 let win;
                 [players, win] = game.UpdateScores(map, players);
-                (win) ? Win() : updateEmitter.emit('update');
+                UpdateClients(win);
             }
     
             if(ws.id != null){
@@ -107,7 +106,7 @@ wss.on('connection', function connection(ws) {
                     }
                     let win;
                     [players, win] = game.UpdateScores(map, players);
-                    (win) ? Win() : updateEmitter.emit('update');
+                    UpdateClients(win);
                 }
             } else {
                 ws.send('error');
@@ -115,35 +114,34 @@ wss.on('connection', function connection(ws) {
         }
     });
 
-    function Win(){
-        for (let client of wss.clients){
-            client.send('win');
-            client.id = null;
-        }
-        players = [];
-        map = game.MapGen();
-        updateEmitter.emit('update');
-    }
-
     function KillPlayer(){
-        map = game.DeletePlayer(map, ws.id);
         players.splice(players.findIndex((player) => player.id === ws.id), 1);
         ws.id = null;
-        updateEmitter.emit('update');
-    }
-    
-    var updateListener = function(event) {
-        let res = {
-            id: ws.id,
-            map,
-            players: players
-        }
-        res.map = game.GetPlayersMap(map, ws.id);
-        ws.send(schema.encode(res));
+        UpdateClients();
     }
 
-    ws.on('close', e => {KillPlayer(); updateEmitter.removeListener('update', updateListener, true)});
-
-    updateEmitter.on('update', updateListener, true);
-    
+    ws.on('close', e => {KillPlayer()});
 });
+
+function UpdateClients(win = false){
+    let wipedMap = players.forEach((player) => {delete player.ws});
+    for(var i = 0; i < players.length; i++){
+        if(players[i]){
+            if(win){
+                players[i].ws.send('win');
+                players[i].ws.id = null; //This is the only time in my life JS shallow object copy has helped me and not been a hassle
+                players = [];
+                map = game.MapGen();
+                UpdateClients();
+            } else {
+                let res = {
+                    id: players[i].ws.id,
+                    map,
+                    players: wipedMap
+                }
+                res.map = game.GetPlayersMap(map, ws.id);
+                players[i].ws.send(schema.encode(res));
+            }
+        }
+    }
+}
