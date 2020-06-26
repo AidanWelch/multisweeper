@@ -10,7 +10,7 @@ updateEmitter.setMaxListeners(MAXPLAYERS);
 var game = require('./gamehandler.js');
 
 class Player {
-    constructor( id, name ) {    
+    constructor( id, name ) {
         this.id = id;
         this.name = name;
         this.score = 0;
@@ -18,7 +18,6 @@ class Player {
 }
 
 var schema = new JOSC({});
-
 
 const wss = new WebSocket.Server({clientTracking: true, perMessageDeflate: true, port: 81});
 var players = [];
