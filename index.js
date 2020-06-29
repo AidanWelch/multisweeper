@@ -36,5 +36,5 @@ app.get('/help', (req, res) => {
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname+'/frontend/index.html'));
 });
-
-require('./gameserver')(app.listen(process.env.PORT || 80));
+app.listen(process.env.PORT || 80);
+require('./gameserver');

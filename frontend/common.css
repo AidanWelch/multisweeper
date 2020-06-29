@@ -59,6 +59,15 @@ form, #lastscore {
 	border: 3px solid black;
 }
 
+ul {
+	border: 2px solid black;
+	width: 50%;
+	margin: auto;
+	padding-top: 1%;
+	padding-bottom: 1%;
+	background-color: rgba(255, 255, 255, 0.75);
+}
+
 /*Thanks to W3Schools for this*/
 #loadingicon {
 	margin: auto auto;
