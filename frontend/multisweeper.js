@@ -185,13 +185,7 @@ function DrawScores (scores){
         max = scores.length;
     }
 
-    function DrawRow (score, place, isPlayer) {
-        let drawPlace;
-        if(!isPlayer){
-            drawPlace = place + 1;
-        } else {
-            drawPlace = 1;
-        }
+    function DrawRow (score, drawPlace) {
         ctx.lineWidth = 5;
         ctx.globalAlpha = 0.5;
         ctx.fillStyle = GetColor(score.id);
@@ -208,11 +202,15 @@ function DrawScores (scores){
         ctx.fillText(score.score, 0.76*canvas.width, Math.round(canvas.height*0.05*drawPlace) + Math.round(0.05*canvas.height) - 3);
         ctx.lineWidth = 1;
     }
-    DrawRow(scores[GetPlayerIndex(scores, id)], GetPlayerIndex(scores, id)+1, true);
+    let player_drawn = false;
     for(let i = 0; i < (max || 10); i++){
         if(scores[i]){
-            DrawRow(scores[i], i+1, false);
+            DrawRow(scores[i], i+1);
+            player_drawn = (scores[i].id === id);
         }
+    }
+    if(!player_drawn){
+        DrawRow(scores[GetPlayerIndex(scores, id)], 10);
     }
 }
 
