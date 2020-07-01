@@ -24,27 +24,6 @@ h1 {
 	margin: auto auto;
 }
 
-table {
-	display: none;
-	top: 5%;
-	left: 10%;
-	width:80%;
-	height: 90%;
-	position: absolute;
-	background-color: rgba(150, 150, 150, 0.4);
-}
-
-table, th, td {
-	border: 5px solid black;
-	border-collapse: collapse;
-}
-
-th, td {
-	width: 33%;
-	height: 8%;
-	font-size: 10vmin;
-}
-
 form, #lastscore {
 	display: none;
 }
