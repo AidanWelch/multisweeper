@@ -59,6 +59,11 @@ form, #lastscore {
 	border: 3px solid black;
 }
 
+a {
+	margin: auto;
+	bottom: 5%;
+}
+
 ul {
 	border: 2px solid black;
 	width: 50%;
