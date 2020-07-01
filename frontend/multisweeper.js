@@ -210,7 +210,7 @@ function DrawScores (scores){
     for(let i = 0; i < (max || 10); i++){
         if(scores[i]){
             DrawRow(scores[i], i+1);
-            player_drawn = (scores[i].id === id);
+            player_drawn = (scores[i].id === id || player_drawn);
         }
     }
     if(!player_drawn){
