@@ -324,7 +324,7 @@ socket.onopen = function(e) {
 var lastResponseTime;
 async function KeepAlive(){
     setInterval(() => {
-        if(new Date().getTime() > lastResponseTime + 20000){
+        if(new Date().getTime() > lastResponseTime + 10000){
             socket.send('Staying alive');
             lastResponseTime = new Date().getTime();
         }
