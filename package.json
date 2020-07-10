@@ -4,14 +4,14 @@
   "description": "Webbased multisweeper.io game",
   "main": "index.js",
   "dependencies": {
-    "bufferutil": "^4.0.1",
-    "express": "^4.17.1",
     "joscompress": "^0.5.7",
-    "utf-8-validate": "^5.0.2",
     "ws": "^7.3.0"
   },
   "devDependencies": {
-    "mocha": "^8.0.0"
+    "bufferutil": "^4.0.1",
+    "express": "^4.17.1",
+    "mocha": "^8.0.0",
+    "utf-8-validate": "^5.0.2"
   },
   "scripts": {
     "test": "mocha",
