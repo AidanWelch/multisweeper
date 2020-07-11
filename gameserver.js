@@ -139,7 +139,7 @@ wss.on('connection', function connection(ws) {
 });
 
 function Update(){
-    for (let connection in connections){
+    for (let connection of connections){
         let res = {
             id: connection.id,
             map,
@@ -151,7 +151,7 @@ function Update(){
 }
 
 function Win(){
-    for (let connection in connections){
+    for (let connection of connections){
         connection.ws.send('win');
         connection.id = null;
     }
