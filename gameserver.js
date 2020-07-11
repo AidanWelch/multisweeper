@@ -1,11 +1,7 @@
 const WebSocket = require('ws'); 
 const JOSC = require('joscompress');
-const EventEmitter = require('events');
-class UpdateEmitter extends EventEmitter {};
-const updateEmitter = new UpdateEmitter();
 
 const MAXPLAYERS = 1000;
-updateEmitter.setMaxListeners(MAXPLAYERS);
 
 var game = require('./gamehandler.js');
 
@@ -17,6 +13,65 @@ class Player {
     }
 }
 
+class Connection {
+    id = null;
+    ws;
+    messageHandler (message){
+        if(message !== 'Staying alive'){
+            let req = InputSanitize(message);
+            if(req.operation == 'create'){
+                if(this.id != null){
+                    map = game.DeletePlayer(map, this.id);
+                    players[this.id] = null;
+                    this.id = null;
+                }
+                this.id = CreatePlayer(req.data.name);
+                map = game.SpawnPlayer(map, this.id);
+                console.log(`Played ${this.id} created`);
+                let win;
+                [players, win] = game.UpdateScores(map, players);
+                (win) ? Win() : Update();
+            }
+    
+            if(this.id != null){
+                if(
+                    req.operation === 'click' && 
+                    (req.data.x < game.DIMENSIONS && req.data.y < game.DIMENSIONS) &&
+                    (req.data.x >= 0 && req.data.y >= 0) && 
+                    (map[req.data.x][req.data.y].claimant_id === null || map[req.data.x][req.data.y].claimant_id === this.id)
+                ){
+                    if(map[req.data.x][req.data.y].count == 'bomb'){
+                        ws.send('loss');
+                        KillPlayer();
+                    } else {
+                        if(map[req.data.x][req.data.y].count == 0){
+                            map[req.data.x][req.data.y].claimant_id = this.id;
+                            map = game.ClaimNeighbors(map, req.data.x, req.data.y, this.id);
+                        } else {
+                            map[req.data.x][req.data.y].claimant_id = this.id;
+                        }
+                    }
+                    let win;
+                    [players, win] = game.UpdateScores(map, players);
+                    (win) ? Win() : Update();
+                }
+            } else {
+                ws.send('error');
+            }
+        }
+    }
+
+    commitSuicide (){
+        connections.splice(connections.indexOf(this), 1);
+    }
+
+    constructor (ws) {
+        this.ws = ws;
+    }
+}
+
+var connections = [];
+
 var schema = new JOSC({});
 
 const wss = new WebSocket.Server({clientTracking: true, perMessageDeflate: true, port: 81});
@@ -24,7 +79,7 @@ var players = [];
 var map = game.MapGen();
 
 function CreatePlayer(name){
-    let playersid = 0;
+    let playersid;
 
     for(playersid = 0; playersid < MAXPLAYERS; playersid++){
         if(players.findIndex((player) => player !== null && player.id === playersid) === -1){
@@ -67,82 +122,41 @@ function InputSanitize(message){
 
 
 wss.on('connection', function connection(ws) {
-    ws.id = null;
-
+    var connection = new Connection(ws);
+    connections.push(connection);
     ws.on('message', function incoming(message) {
-        if(message !== 'Staying alive'){
-            let req = InputSanitize(message);
-            if(req.operation == 'create'){
-                if(ws.id != null){
-                    map = game.DeletePlayer(map, ws.id);
-                    players[ws.id] = null;
-                    ws.id = null;
-                }
-                ws.id = CreatePlayer(req.data.name);
-                map = game.SpawnPlayer(map, ws.id);
-                console.log(`Played ${ws.id} created`);
-                let win;
-                [players, win] = game.UpdateScores(map, players);
-                (win) ? Win() : updateEmitter.emit('update');
-            }
-    
-            if(ws.id != null){
-                if(
-                    req.operation === 'click' && 
-                    (req.data.x < game.DIMENSIONS && req.data.y < game.DIMENSIONS) &&
-                    (req.data.x >= 0 && req.data.y >= 0) && 
-                    (map[req.data.x][req.data.y].claimant_id === null || map[req.data.x][req.data.y].claimant_id === ws.id)
-                ){
-                    if(map[req.data.x][req.data.y].count == 'bomb'){
-                        ws.send('loss');
-                        KillPlayer();
-                    } else {
-                        if(map[req.data.x][req.data.y].count == 0){
-                            map[req.data.x][req.data.y].claimant_id = ws.id;
-                            map = game.ClaimNeighbors(map, req.data.x, req.data.y, ws.id);
-                        } else {
-                            map[req.data.x][req.data.y].claimant_id = ws.id;
-                        }
-                    }
-                    let win;
-                    [players, win] = game.UpdateScores(map, players);
-                    (win) ? Win() : updateEmitter.emit('update');
-                }
-            } else {
-                ws.send('error');
-            }
-        }
+        connection.messageHandler(message);
     });
 
-    function Win(){
-        for (let client of wss.clients){
-            client.send('win');
-            client.id = null;
-        }
-        players = [];
-        map = game.MapGen();
-        updateEmitter.emit('update');
+    function KillPlayer(){
+        map = game.DeletePlayer(map, connection.id);
+        players.splice(players.findIndex((player) => player.id === connection.id), 1);
+        connection.id = null;
+        Update();
     }
 
-    function KillPlayer(){
-        map = game.DeletePlayer(map, ws.id);
-        players.splice(players.findIndex((player) => player.id === ws.id), 1);
-        ws.id = null;
-        updateEmitter.emit('update');
-    }
-    
-    var updateListener = function(event) {
+
+    ws.on('close', e => {KillPlayer(); connection.commitSuicide()});
+});
+
+function Update(){
+    for (let connection in connections){
         let res = {
-            id: ws.id,
+            id: connection.id,
             map,
             players: players
         }
-        res.map = game.GetPlayersMap(map, ws.id);
-        ws.send(schema.encode(res));
+        res.map = game.GetPlayersMap(map, connection.id);
+        connection.ws.send(schema.encode(res));
     }
+}
 
-    ws.on('close', e => {KillPlayer(); updateEmitter.removeListener('update', updateListener, true)});
-
-    updateEmitter.on('update', updateListener, true);
-    
-});
+function Win(){
+    for (let connection in connections){
+        connection.ws.send('win');
+        connection.id = null;
+    }
+    players = [];
+    map = game.MapGen();
+    Update();
+}
