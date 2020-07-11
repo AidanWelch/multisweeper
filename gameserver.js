@@ -14,8 +14,6 @@ class Player {
 }
 
 class Connection {
-    id = null;
-    ws;
     messageHandler (message){
         if(message !== 'Staying alive'){
             let req = InputSanitize(message);
@@ -67,6 +65,7 @@ class Connection {
 
     constructor (ws) {
         this.ws = ws;
+        this.id = null;
     }
 }
 
