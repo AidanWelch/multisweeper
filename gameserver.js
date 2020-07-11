@@ -40,7 +40,7 @@ class Connection {
                 ){
                     if(map[req.data.x][req.data.y].count == 'bomb'){
                         this.ws.send('loss');
-                        KillPlayer();
+                        this.KillPlayer();
                     } else {
                         if(map[req.data.x][req.data.y].count == 0){
                             map[req.data.x][req.data.y].claimant_id = this.id;
@@ -57,6 +57,13 @@ class Connection {
                 this.ws.send('error');
             }
         }
+    }
+
+    KillPlayer(){
+        map = game.DeletePlayer(map, this.id);
+        players.splice(players.findIndex((player) => player.id === this.id), 1);
+        this.id = null;
+        Update();
     }
 
     commitSuicide (){
@@ -127,15 +134,7 @@ wss.on('connection', function connection(ws) {
         connection.messageHandler(message);
     });
 
-    function KillPlayer(){
-        map = game.DeletePlayer(map, connection.id);
-        players.splice(players.findIndex((player) => player.id === connection.id), 1);
-        connection.id = null;
-        Update();
-    }
-
-
-    ws.on('close', e => {KillPlayer(); connection.commitSuicide()});
+    ws.on('close', e => {connection.KillPlayer(); connection.commitSuicide()});
 });
 
 function Update(){
