@@ -39,7 +39,7 @@ class Connection {
                     (map[req.data.x][req.data.y].claimant_id === null || map[req.data.x][req.data.y].claimant_id === this.id)
                 ){
                     if(map[req.data.x][req.data.y].count == 'bomb'){
-                        ws.send('loss');
+                        this.ws.send('loss');
                         KillPlayer();
                     } else {
                         if(map[req.data.x][req.data.y].count == 0){
@@ -54,7 +54,7 @@ class Connection {
                     (win) ? Win() : Update();
                 }
             } else {
-                ws.send('error');
+                this.ws.send('error');
             }
         }
     }
