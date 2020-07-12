@@ -325,7 +325,12 @@ var lastResponseTime;
 async function KeepAlive(){
     setInterval(() => {
         if(new Date().getTime() > lastResponseTime + 10000){
-            socket.send('Staying alive');
+            if(socket.readyState === socket.OPEN){
+                socket.send('Staying alive');
+            } else {
+                alert("This page has been timed out by your browser");
+                location.reload();
+            }
             lastResponseTime = new Date().getTime();
         }
     }, 10)
@@ -382,7 +387,12 @@ canvas.addEventListener('mousedown', function(event) {
                 if(flaggedTiles.findIndex((flagged) => {
                     return (flagged[0] == tile[0]) && (flagged[1] == tile[1]);
                 }) == -1){
-                    socket.send(JSON.stringify(new Request('click', {x: tile[0], y: tile[1]})));
+                    if(socket.readyState === socket.OPEN){
+                        socket.send(JSON.stringify(new Request('click', {x: tile[0], y: tile[1]})));
+                    } else {
+                        alert("This page has been timed out by your browser");
+                        location.reload();
+                    }
                 }
             }
         });
