@@ -139,20 +139,24 @@ wss.on('connection', function connection(ws) {
 
 function Update(){
     for (let connection of connections){
-        let res = {
-            id: connection.id,
-            map,
-            players: players
-        }
-        res.map = game.GetPlayersMap(map, connection.id);
-        connection.ws.send(schema.encode(res));
+        (async function(){
+            let res = {
+                id: connection.id,
+                map,
+                players: players
+            }
+            res.map = game.GetPlayersMap(map, connection.id);
+            connection.ws.send(schema.encode(res));
+        })();
     }
 }
 
 function Win(){
     for (let connection of connections){
-        connection.ws.send('win');
-        connection.id = null;
+        (async function(){
+            connection.ws.send('win');
+            connection.id = null;
+        })();
     }
     players = [];
     map = game.MapGen();
