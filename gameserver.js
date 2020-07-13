@@ -88,7 +88,7 @@ function CreatePlayer(name){
     let playersid;
 
     for(playersid = 0; playersid < MAXPLAYERS; playersid++){
-        if(players.findIndex((player) => player !== null && player.id === playersid) === -1){
+        if(players.findIndex((player) => player.id === playersid) === -1){
             break;
         }
     }
