@@ -349,16 +349,18 @@ canvas.addEventListener('contextmenu', function(event) {
     if(id != null){
         event.preventDefault();
         let tile = GetSelectedTile(event);
-        if(flaggedTiles.findIndex((flagged) => {
-            return (flagged[0] == tile[0]) && (flagged[1] == tile[1]);
-        }) == -1){
-            flaggedTiles.push(tile);
-        } else {
-            flaggedTiles = flaggedTiles.filter((flagged) => {
-                return (flagged[0] != tile[0]) || (flagged[1] != tile[1]);
-            });
+        if(map[tile[0]][tile[1]].claimant_id === null){
+            if(flaggedTiles.findIndex((flagged) => {
+                return (flagged[0] == tile[0]) && (flagged[1] == tile[1]);
+            }) == -1){
+                flaggedTiles.push(tile);
+            } else {
+                flaggedTiles = flaggedTiles.filter((flagged) => {
+                    return (flagged[0] != tile[0]) || (flagged[1] != tile[1]);
+                });
+            }
+            DrawAll();
         }
-        DrawAll();
     }
 });
 
