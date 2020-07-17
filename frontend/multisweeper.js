@@ -57,10 +57,7 @@ window.onresize = () => {
 }
 
 const colors = {
-    tile_top: '#969696',
-    tile_sides: '#646464',
-    flag: '#ff0000',
-    ground: '#c8c8c8',
+    unclaimed_tile: '#969696',
     walls: '#000000',
     white: '#ffffff'
 }
@@ -117,7 +114,7 @@ function Draw(tile) {
     let x = tile.x-view_x;
     let y = tile.y-view_y;
     if(tile.claimant_id == null){
-        ctx.fillStyle = colors.tile_top; //DEBUG ONLY GetColor(Math.floor(Math.random()*1000));
+        ctx.fillStyle = colors.unclaimed_tile; //DEBUG ONLY GetColor(Math.floor(Math.random()*1000));
     }   else {
         ctx.fillStyle = GetColor(tile.claimant_id);
     }
@@ -304,10 +301,10 @@ socket.onopen = function(e) {
     Game = function (lastScore = null, winner = null) {
         menubox.style.display = "block";
         if(winner !== null){
-            endtext.innerHTML = (winner.isPlayer) ? `You won!  Your score was ${lastScore}` : `"${winner.name}" won!  Your score was ${lastScore}`;
+            endtext.innerHTML = (winner.isPlayer) ? `You won!  You had claimed ${lastScore} tiles.` : `"${winner.name}" won!  You had claimed ${lastScore} tiles.`;
             endtext.style.display = "block";
         } else if (lastScore !== null){
-            endtext.innerHTML = `You lost!  Your score was ${lastScore}`;
+            endtext.innerHTML = `You lost!  You had claimed ${lastScore} tiles.`;
             endtext.style.display = "block";
         }
         ClearMap();
