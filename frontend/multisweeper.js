@@ -5,6 +5,7 @@ const loading = document.getElementsByClassName("loading");
 const menubox = document.getElementById("menubox");
 const reversezoom = document.getElementById("reversezoom");
 const endtext = document.getElementById("endtext");
+const colormode = document.getElementById("colormode");
 
 const ctx = canvas.getContext("2d");
 const DIMENSIONS = 100;
@@ -34,6 +35,94 @@ var responseSchema = {
     }]
 }
 
+///COLOR DEFINITION:
+const ColorModes = {
+    default: {
+        colors: {
+            unclaimed_tile: '#969696',
+            walls: '#000000',
+            text: '#000000',
+            outline: '#ffffff'
+        },
+        GetColor(color_id){
+            color_id = color_id.toString().split('');
+            let h = 40 * color_id.pop();
+            let s = 100;
+            let l = 50;
+            if(color_id.length > 0){
+                s = 10 * color_id.pop();
+                if(color_id.length > 0){
+                    l = (5 * (color_id.pop() + 1)) + 50;
+                }
+            }
+            return `hsl(${h}, ${s}%, ${l}%)`;
+        }
+    },
+    darker: {
+        colors: {
+            unclaimed_tile: '#5C5C5C',
+            walls: '#000000',
+            text: '#000000',
+            outline: '#ffffff'
+        },
+        GetColor(color_id){
+            color_id = color_id.toString().split('');
+            let h = 40 * color_id.pop();
+            let s = 100;
+            let l = 20;
+            if(color_id.length > 0){
+                s = 10 * color_id.pop();
+            }
+            return `hsl(${h}, ${s}%, ${l}%)`;
+        }
+    },
+    redenemies: {
+        colors: {
+            unclaimed_tile: '#969696',
+            walls: '#000000',
+            text: '#000000',
+            outline: '#ffffff'
+        },
+        GetColor(color_id){
+            if(color_id === id){
+                return '#5C5C5C';
+            } else {
+                return '#FF0000';
+            }
+        }
+    },
+    darkmode: {
+        colors: {
+            unclaimed_tile: '#5C5C5C',
+            walls: '#000000',
+            text: '#000000',
+            outline: '#ffffff'
+        },
+        GetColor(color_id){
+            color_id = color_id.toString().split('');
+            let h = 40 * color_id.pop();
+            let s = 100;
+            let l = 20;
+            if(color_id.length > 0){
+                s = 10 * color_id.pop();
+            }
+            return `hsl(${h}, ${s}%, ${l}%)`;
+        }
+    }
+}
+
+var colors;
+
+var GetColor;
+
+function UpdateColorMode(){
+    colors = ColorModes[colormode.value].colors;
+    GetColor = ColorModes[colormode.value].GetColor;
+}
+
+
+///////////////////
+
 const schema = new JOSC(responseSchema);
 
 var flaggedTiles = [];
@@ -56,32 +145,12 @@ window.onresize = () => {
     }
 }
 
-const colors = {
-    unclaimed_tile: '#969696',
-    walls: '#000000',
-    white: '#ffffff'
-}
-
 class Request {
     constructor (operation, data){
         this.operation = operation;
         this.data = data;
         lastResponseTime = new Date().getTime();
     }
-}
-
-function GetColor(id){
-    id = id.toString().split('');
-    let h = 40 * id.pop();
-    let s = 100;
-    let l = 50;
-    if(id.length > 0){
-        s = 10 * id.pop();
-        if(id.length > 0){
-            l = (5 * (id.pop() + 1)) + 50;
-        }
-    }
-    return `hsl(${h}, ${s}%, ${l}%)`;
 }
 
 function GetTileCount(){
@@ -129,15 +198,16 @@ function Draw(tile) {
     }
     if(tile.count > 0){
         ctx.font = `${GetTileSize()}px Verdana`;
-        ctx.fillStyle = colors.walls;
+        ctx.fillStyle = colors.text;
         ctx.fillText(tile.count.toString(), x*GetTileSize()+(GetTileSize()/5), (y*GetTileSize())+(GetTileSize()*0.85));
         ctx.font = `${GetTileSize()}px Verdana`;
-        ctx.strokeStyle = colors.white;
+        ctx.strokeStyle = colors.outline;
         ctx.strokeText(tile.count.toString(), x*GetTileSize()+(GetTileSize()/5), (y*GetTileSize())+(GetTileSize()*0.85));
     }
 }
 
 function DrawAll() {
+    UpdateColorMode();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     let x_max = GetTileCount() + Math.floor(view_x);
     let y_max = GetTileCount() + Math.floor(view_y);
@@ -192,8 +262,8 @@ function DrawScores (scores){
         ctx.fillStyle = GetColor(score.id);
         ctx.fillRect(0.1*canvas.width, 0.05*drawPlace*canvas.height, canvas.width*0.8, canvas.height*0.05);
         ctx.globalAlpha = 1;
-        ctx.fillStyle = colors.walls;
-        ctx.strokeStyle = colors.walls;
+        ctx.fillStyle = colors.text;
+        ctx.strokeStyle = colors.text;
         ctx.font = `${Math.floor(canvas.height*0.05)}px Verdana`;
         ctx.strokeRect(0.1*canvas.width, 0.05*drawPlace*canvas.height, canvas.width*0.1, canvas.height*0.05);
         ctx.fillText(place, 0.11*canvas.width, Math.round(canvas.height*0.05*drawPlace) + Math.round(0.05*canvas.height) - 3);
