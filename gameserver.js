@@ -134,6 +134,11 @@ wss.on('connection', function connection(ws) {
         connection.messageHandler(message);
     });
 
+    ws.on('error', (err) => {
+        console.warn(err);
+        ws.send('error');
+    });
+
     ws.on('close', e => {connection.KillPlayer(); connection.commitSuicide()});
 });
 
